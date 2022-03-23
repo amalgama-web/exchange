@@ -1,7 +1,7 @@
 export default (store) => {
     if(process.client) {
         setTimeout(() => {
-            store.dispatch('setStateFromStorage');
+            store.dispatch('setCurrencyListsFromLS');
         });
     }
 }

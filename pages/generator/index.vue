@@ -1,25 +1,28 @@
 <template>
     <div>
-        <h3>Генерируем список рандомных валют для обмена</h3>
+        <h2>Генерируем список рандомных валют для обмена</h2>
         
-        <button class="button"
-                @click="generateList"
-        >Сгенерировать коды валют
-        </button>
-        
-        <div v-if="currencyList.length">
-            <ul class="currency-list">
-                <li class="currency-badge"
-                    v-for="currency in currencyList"
-                >{{ currency }}
-                </li>
-            </ul>
+        <div class="row-buttons">
+            <button class="button"
+                    @click="generateList"
+            >Сгенерировать коды валют
+            </button>
             
-            <nuxt-link class="button"
-                    to="/generator/pairs-generator"
+            <nuxt-link v-if="currencyList.length"
+                       class="button _green"
+                       to="/generator/pairs-generator"
             >Далее к генерации пар
             </nuxt-link>
         </div>
+        
+        <ul v-if="currencyList.length"
+            class="currency-list"
+        >
+            <li class="currency-badge"
+                v-for="currency in currencyList"
+            >{{ currency }}
+            </li>
+        </ul>
     </div>
 </template>
 
@@ -27,20 +30,23 @@
     import currencyService from "~/services/currencyService";
 
     export default {
-        data() {
-            return {
-            }
+        meta: {
+            ruName: 'Генератор списка валют'
         },
-        
+
+        data() {
+            return {}
+        },
+
         computed: {
             currencyList() {
                 return this.$store.state.currencyList;
             }
         },
-        
+
         methods: {
             generateList() {
-                this.$store.dispatch('setCurrencyList', currencyService.getRandomCurrencies(10) );
+                this.$store.dispatch('setCurrencyList', currencyService.getRandomCurrencies(10));
             },
         }
     }

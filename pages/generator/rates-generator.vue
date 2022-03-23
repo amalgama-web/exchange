@@ -1,13 +1,34 @@
 <template>
     <div>
         
-        <h3>Генерируем курсы валют для пар:</h3>
+        <h2>Генерируем курсы валют для пар:</h2>
         
+        <div class="row-buttons">
+            <button class="button"
+                    @click="generateRates"
+            >Сгенерировать курсы для пар
+            </button>
+            
+            <nuxt-link v-if="currencyRates.length"
+                       class="button _green"
+                       to="/generator/success"
+            >Далее
+            </nuxt-link>
+        </div>
         
-        <button class="button"
-                @click="generateRates"
-        >Сгенерировать курсы
-        </button>
+        <h3>Список пар</h3>
+        
+        <ul v-if="currencyPairs.length"
+            class="currency-list"
+        >
+            <li class="currency-badge"
+                v-for="pair in currencyPairs"
+            >
+                {{pair.base_currency}}/{{pair.quote_currency}}
+            </li>
+        </ul>
+        
+        <h3>Список пар c курсом</h3>
         
         <div v-if="currencyRates.length">
             <ul class="currency-column-list">
@@ -16,24 +37,7 @@
                     Курс: {{rateItem.rate}}
                 </li>
             </ul>
-            <nuxt-link class="button"
-                       to="/generator/success"
-            >Далее
-            </nuxt-link>
         </div>
-        
-        
-        <ul v-else
-            class="currency-column-list"
-        >
-            <li v-for="pair in currencyPairs">
-                <div class="currency-badge">{{pair.base_currency}}</div>
-                →
-                <div class="currency-badge">{{pair.quote_currency}}</div>
-            </li>
-        </ul>
-    
-        
     
     </div>
 </template>
@@ -42,6 +46,9 @@
     import currencyService from "~/services/currencyService";
 
     export default {
+        meta: {
+            ruName: 'Генератор курсов'
+        },
 
         data() {
             return {}
@@ -59,7 +66,6 @@
         methods: {
             generateRates() {
                 const rates = currencyService.getCurrencyRates(this.currencyPairs);
-                console.log(rates);
                 this.$store.dispatch('setCurrencyRates', rates);
             }
         }

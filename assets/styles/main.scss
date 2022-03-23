@@ -13,14 +13,23 @@ html {
   line-height: 1.6;
 
   font-family: Verdana, sans-serif;
+  color: #272727;
 }
 ul, ol {
   margin: 0;
   padding: 0;
   list-style-type: none;
 }
+
+h1, h2, h3, h4 {
+  margin-top: 0;
+}
 a {
   text-decoration: none;
+  &:link {color: cornflowerblue;}
+  &:visited {color: cornflowerblue;}
+  &:hover {color: darken(cornflowerblue, 30%);}
+  &:active {color: cornflowerblue;}
 }
 .l-container {
   max-width: 1200px;
@@ -58,6 +67,11 @@ a {
   &:hover { background-color: lighten(cornflowerblue, 5%); }
   &:active { background-color: cornflowerblue; }
 
+  &._green {
+    background-color: mediumseagreen;
+    &:hover { background-color: lighten(mediumseagreen, 5%); }
+    &:active { background-color: mediumseagreen; }
+  }
 }
 
 
@@ -66,7 +80,7 @@ a {
   list-style-type: none;
 
   padding: 0;
-  margin: 40px 0;
+  margin-bottom: 40px;
 }
 
 .currency-badge {
@@ -97,4 +111,12 @@ a {
   padding: 0;
   list-style-type: none;
   columns: 4;
+}
+
+.row-buttons {
+  display: flex;
+  margin-bottom: 40px;
+  .button {
+    margin-right: 20px;
+  }
 }

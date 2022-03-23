@@ -25,6 +25,7 @@
 
         methods: {
             onInput(e) {
+                // todo продумать лучший вариант для float
                 let newValue = e.target.value.replace(/[^\d.]|^\./g, '');
                 let matchDot = newValue.match(/\./g);
                 if (newValue && newValue[newValue.length - 1] !== '.' || matchDot && matchDot.length > 1) {

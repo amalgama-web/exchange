@@ -14,8 +14,8 @@
                 <div class="currency-plate">
                     <float-input class="currency-plate__input"
                                  v-model="baseCurAmount"
-                                 @change="baseAmountChange"
-                                 :disabled="!currenciesSelected"
+                                 @change="calcQuoteDirection"
+                                 :disabled="!isCurrenciesSelected"
                     ></float-input>
                     <currency-select :currency-list="currencyList"
                                      :disabled-list="[quoteCur]"
@@ -27,8 +27,8 @@
                 <div class="currency-plate">
                     <float-input class="currency-plate__input"
                                  v-model="quoteCurAmount"
-                                 @change="quoteAmountChange"
-                                 :disabled="!currenciesSelected"
+                                 @change="calcBaseDirection"
+                                 :disabled="!isCurrenciesSelected"
                     ></float-input>
                     <currency-select :currency-list="currencyList"
                                      :disabled-list="[baseCur]"
@@ -41,10 +41,18 @@
                 <div class="exchange-cell__head">
                     Итого
                 </div>
-                <div class="exchange-cell__subhead">Вы платите {{baseCurAmount}}</div>
-                <div class="exchange-cell__subhead">Вы получаете {{quoteCurAmount}}</div>
-                <div class="exchange-cell__subhead">Комиссия {{comissionText}}</div>
-                <div class="exchange-cell__subhead">Курс {{rate}}</div>
+                
+                <div v-if="!isCurrenciesSelected" class="exchange-summary-empty">
+                    Выберите валюты для обмена
+                </div>
+                <div v-else class="exchange-summary">
+                    <div class="exchange-summary__item">Вы платите {{ baseCurAmount || 0 }} {{ baseCur }}</div>
+                    <div class="exchange-summary__item _sm">Из них комиссия {{ commission || 0 }} {{ baseCur }}</div>
+                    <div class="exchange-summary__item _sm">К конвертации {{ baseCurAmountToConvert || 0 }} {{ baseCur }}</div>
+                    <div class="exchange-summary__item">Вы получаете {{ quoteCurAmount || 0 }} {{ quoteCur }}</div>
+                    <div class="exchange-summary__item">Комиссия {{ commissionRateText }}</div>
+                    <div class="exchange-summary__item">Курс 1 {{ baseCur }} = {{ rate }} {{ quoteCur }}</div>
+                </div>
             </div>
         </div>
     
@@ -56,8 +64,13 @@
 <script>
     import currencySelect from '~/components/currency-select.vue';
     import floatInput from '~/components/float-input.vue';
+    import currencyService from "~/services/currencyService";
 
     export default {
+        meta: {
+            ruName: 'Страница обмена'
+        },
+        
         components: {
             currencySelect,
             floatInput
@@ -69,9 +82,11 @@
                 quoteCur: null,
 
                 baseCurAmount: null,
+                baseCurAmountToConvert: null,
                 quoteCurAmount: null,
-
-                comission: null,
+                commission: null,
+                
+                commissionRate: null,
                 rate: null
             }
         },
@@ -89,11 +104,11 @@
                 return this.$store.state.currencyRates;
             },
 
-            comissionText() {
-                return this.comission ? `${this.comission}%` : '';
+            commissionRateText() {
+                return this.commissionRate ? `${this.commissionRate}%` : '';
             },
             
-            currenciesSelected() {
+            isCurrenciesSelected() {
                 return this.baseCur && this.quoteCur;
             }
         },
@@ -101,34 +116,53 @@
         methods: {
             selectBaseCur(currency) {
                 this.baseCur = currency;
-                this.updateRates();
+                this.update();
             },
 
             selectQuoteCur(currency) {
                 this.quoteCur = currency;
-                this.updateRates();
+                this.update();
             },
 
-            updateRates() {
-                if (!this.currenciesSelected) return;
+            update() {
+                if (!this.isCurrenciesSelected) return;
 
+                this.setPairs();
+                this.setRates();
+                this.calcQuoteDirection();
+            },
+            
+            setPairs() {
+                // todo привести списки к одному типу
                 const pairItem = this.currencyPairs.find(item => item.base_currency === this.baseCur && item.quote_currency === this.quoteCur);
-                this.comission = pairItem.comission;
-
-                console.log(this.currencyRates);
+                this.commissionRate = pairItem.commission;
+            },
+            
+            setRates() {
+                // todo привести списки к одному типу
                 const rateItem = this.currencyRates.find(item => item.pair === `${this.baseCur}/${this.quoteCur}`);
                 this.rate = rateItem.rate;
             },
 
-            baseAmountChange() {
-                console.log('baseAmountChange');
-                console.log(this.baseCurAmount);
-            },
+            calcQuoteDirection() {
+                if (!this.isCurrenciesSelected) return;
 
-            quoteAmountChange() {
-                console.log('quoteAmountChange');
-                console.log(this.quoteCurAmount);
+                this.commission = currencyService.toFixed(this.baseCurAmount * this.commissionRate / 100);
+                this.baseCurAmountToConvert = currencyService.toFixed(this.baseCurAmount - this.commission);
+                this.quoteCurAmount = currencyService.toFixed(this.baseCurAmountToConvert * this.rate);
+            },
+            
+            calcBaseDirection() {
+                if (!this.isCurrenciesSelected) return;
+
+                this.baseCurAmountToConvert = currencyService.toFixed(this.quoteCurAmount / this.rate);
+                this.commission = currencyService.toFixed(this.baseCurAmountToConvert / (100 - this.commissionRate) * this.commissionRate);
+                this.baseCurAmount = currencyService.toFixed(this.baseCurAmountToConvert + this.commission);
             }
+        },
+        
+        created() {
+            // todo запрос списка валют, пар и курса
         }
 
     }
@@ -171,12 +205,31 @@
         &__subhead {
             font-size: 20px;
             margin-bottom: 10px;
+            
         }
         
         flex-basis: 47%;
         border: 1px solid #ccc;
         border-radius: 5px;
         padding: 30px;
+    }
+    
+    .exchange-summary-empty {
+        font-size: 20px;
+        text-align: center;
+    }
+    
+    .exchange-summary {
+        &__item {
+            font-size: 20px;
+            margin-bottom: 10px;
+    
+            &._sm {
+                font-size: 14px;
+                color: #aaaaaa;
+                margin-bottom: 5px;
+            }
+        }
     }
     
     .currency-plate {
@@ -196,7 +249,7 @@
         
         &__input {
             height: 50px;
-            border: 1px solid #ccc;
+            border: 1px solid #bbb;
             outline: none !important;
             display: block;
             width: 100%;
@@ -210,7 +263,11 @@
             @include placeholder-color(#aaa);
             
             &:focus {
-                border-color: darken(#ccc, 10%);
+                border-color: darken(#bbb, 10%);
+            }
+            &[disabled] {
+                background-color: #eee;
+                cursor: not-allowed;
             }
         }
     }

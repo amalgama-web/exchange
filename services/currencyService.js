@@ -38,7 +38,7 @@ export default {
                     currencyPairs.push({
                         base_currency: baseCurrency,
                         quote_currency: quoteCurrency,
-                        comission: randomService.getRandomInt(1, 5)
+                        commission: randomService.getRandomInt(1, 5)
                     })
                 }
             });
@@ -54,5 +54,9 @@ export default {
                 rate: randomService.getRandomInt(10, 100)
             }
         });
+    },
+
+    toFixed(number) {
+        return +number.toFixed(2);
     }
 }

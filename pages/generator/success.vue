@@ -14,7 +14,9 @@
 
 <script>
     export default {
-
+        meta: {
+            ruName: 'Завершение генерации'
+        },
     }
 </script>
 

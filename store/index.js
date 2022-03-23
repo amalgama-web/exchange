@@ -13,11 +13,12 @@ export default {
         }
     },
 
-
-
     getters: {
-
+        isGeneratedDataReady(state) {
+            return !!(state.currencyList.length && state.currencyPairs.length && state.currencyRates.length);
+        }
     },
+
     mutations: {
         setCurrencyList(state, payload) {
             state.currencyList = payload;
@@ -36,11 +37,21 @@ export default {
         setCurrencyList(context, payload) {
             context.commit('setCurrencyList', payload);
             localStorage.setItem('currencyList', JSON.stringify(payload));
+
+            // remove old generated pairs and rates lists
+            context.commit('setCurrencyPairs', []);
+            context.commit('setCurrencyRates', []);
+            localStorage.removeItem('currencyPairs');
+            localStorage.removeItem('currencyRates');
         },
 
         setCurrencyPairs(context, payload) {
             context.commit('setCurrencyPairs', payload);
             localStorage.setItem('currencyPairs', JSON.stringify(payload));
+
+            // remove old generated rates list only
+            context.commit('setCurrencyRates', []);
+            localStorage.removeItem('currencyRates');
         },
 
         setCurrencyRates(context, payload) {
@@ -48,7 +59,7 @@ export default {
             localStorage.setItem('currencyRates', JSON.stringify(payload));
         },
 
-        setStateFromStorage(context) {
+        setCurrencyListsFromLS(context) {
             const listData = localStorage.getItem('currencyList');
             const pairsData = localStorage.getItem('currencyPairs');
             const ratesData = localStorage.getItem('currencyRates');
@@ -61,6 +72,7 @@ export default {
 
             if(!ratesData) return;
             context.commit('setCurrencyRates', JSON.parse(ratesData) );
-        }
+        },
+
     },
 }
