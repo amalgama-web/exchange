@@ -29,9 +29,6 @@
         },
         computed: {
             routes() {
-                if(process.client) {
-                    console.log(this.$route);
-                }
                 return this.$route.matched;
             }
         },

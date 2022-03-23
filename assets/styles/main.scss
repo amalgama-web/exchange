@@ -1,10 +1,12 @@
 * {
   box-sizing: border-box;
+
   &:before,
   &:after {
     box-sizing: border-box;
   }
 }
+
 body,
 html {
   margin: 0;
@@ -15,6 +17,7 @@ html {
   font-family: Verdana, sans-serif;
   color: #272727;
 }
+
 ul, ol {
   margin: 0;
   padding: 0;
@@ -24,13 +27,27 @@ ul, ol {
 h1, h2, h3, h4 {
   margin-top: 0;
 }
+
 a {
   text-decoration: none;
-  &:link {color: cornflowerblue;}
-  &:visited {color: cornflowerblue;}
-  &:hover {color: darken(cornflowerblue, 30%);}
-  &:active {color: cornflowerblue;}
+
+  &:link {
+    color: cornflowerblue;
+  }
+
+  &:visited {
+    color: cornflowerblue;
+  }
+
+  &:hover {
+    color: darken(cornflowerblue, 30%);
+  }
+
+  &:active {
+    color: cornflowerblue;
+  }
 }
+
 .l-container {
   max-width: 1200px;
   margin-left: auto;
@@ -55,25 +72,48 @@ a {
   font-weight: 400;
   font-style: normal;
   color: #fff;
-  &:link {color: #fff;}
-  &:visited {color: #fff;}
-  &:hover {color: #fff;}
-  &:active {color: #fff;}
+
+  &:link {
+    color: #fff;
+  }
+
+  &:visited {
+    color: #fff;
+  }
+
+  &:hover {
+    color: #fff;
+  }
+
+  &:active {
+    color: #fff;
+  }
 
   transition: all linear 150ms;
   cursor: pointer;
 
   background-color: cornflowerblue;
-  &:hover { background-color: lighten(cornflowerblue, 5%); }
-  &:active { background-color: cornflowerblue; }
+
+  &:hover {
+    background-color: lighten(cornflowerblue, 5%);
+  }
+
+  &:active {
+    background-color: cornflowerblue;
+  }
 
   &._green {
     background-color: mediumseagreen;
-    &:hover { background-color: lighten(mediumseagreen, 5%); }
-    &:active { background-color: mediumseagreen; }
+
+    &:hover {
+      background-color: lighten(mediumseagreen, 5%);
+    }
+
+    &:active {
+      background-color: mediumseagreen;
+    }
   }
 }
-
 
 
 .currency-list {
@@ -110,13 +150,18 @@ a {
   margin: 40px 0;
   padding: 0;
   list-style-type: none;
-  columns: 4;
+  columns: 3;
 }
 
 .row-buttons {
   display: flex;
   margin-bottom: 40px;
+
   .button {
     margin-right: 20px;
   }
+}
+
+[v-cloak] {
+  display: none
 }

@@ -1,19 +1,31 @@
 <template>
-    <div class="l-container">
-        <h3>Добрый день! <br>
-            <span v-if="!isGeneratedDataReady">
+    <div v-cloak>
+        <div class="l-container">
+            <h2>Добрый день!</h2>
+            <p v-if="!isGeneratedDataReady">
                 Для начала работы необходимо сгенерировать списки валют для обмена
-            </span>
-            <span v-else>
+            </p>
+            <p v-else>
                 Списки валют сгенерированы, но вы можете их обновить
-            </span>
-        </h3>
+            </p>
+            
+            <nuxt-link class="button"
+                       to="/generator/"
+            >Перейти к генерации
+            </nuxt-link>
+        </div>
         
-        <nuxt-link class="button"
-                   to="/generator/"
-        >Перейти к генерации
-        </nuxt-link>
+        <div v-if="isGeneratedDataReady"
+             class="l-container"
+        >
+            <h2>Данные сгенерированы, можно перейти к обмену</h2>
+            <nuxt-link class="button _green"
+                       to="/exchange/"
+            >Перейти к обмену
+            </nuxt-link>
+        </div>
     </div>
+
 </template>
 
 <script>

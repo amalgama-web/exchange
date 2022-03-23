@@ -11,8 +11,8 @@
             
             <nuxt-link v-if="currencyPairs.length"
                        class="button _green"
-                       to="/generator/rates-generator"
-            >Далее к генератору курсов
+                       to="/generator/format-and-save/"
+            >Далее
             </nuxt-link>
         </div>
         
@@ -24,18 +24,21 @@
             >{{ currency }}
             </li>
         </ul>
-    
-        <h3>Список пар и комиссий</h3>
-
-        <ul v-if="currencyPairs.length"
-            class="currency-column-list"
-        >
-            <li v-for="pair in currencyPairs">
-                <div class="currency-badge">{{pair.base_currency}}</div>
-                <div class="currency-badge">{{pair.quote_currency}}</div>
-                {{ pair.commission }}%
-            </li>
-        </ul>
+        
+        <template v-if="currencyPairs.length">
+           
+            <h3>Список пар, курс и комиссия:</h3>
+            
+            <ul class="currency-column-list">
+                <li v-for="pair in currencyPairs">
+                    <div class="currency-badge">{{pair.base_currency}}</div>
+                    <div class="currency-badge">{{pair.quote_currency}}</div>
+                    <strong>{{ +pair.rate.toFixed(6) }}</strong>
+                    {{ pair.commission }}%
+                </li>
+            </ul>
+            
+        </template>
     
     
     </div>

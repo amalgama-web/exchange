@@ -31,32 +31,50 @@ export default {
 
     getCurrencyPairs(currencyList) {
         const currencyPairs = [];
+        const listLength = currencyList.length;
 
-        currencyList.forEach(baseCurrency => {
-            currencyList.forEach(quoteCurrency => {
-                if(baseCurrency !== quoteCurrency) {
-                    currencyPairs.push({
-                        base_currency: baseCurrency,
-                        quote_currency: quoteCurrency,
-                        commission: randomService.getRandomInt(1, 5)
-                    })
-                }
-            });
-        });
+        for(let baseIndex = 0; baseIndex < listLength - 1; baseIndex++) {
+            for(let quoteIndex = baseIndex + 1; quoteIndex < listLength; quoteIndex++) {
+
+                const rate = randomService.getRandomInt(10, 100);
+                // прямая пара
+                currencyPairs.push({
+                    base_currency: currencyList[baseIndex],
+                    quote_currency: currencyList[quoteIndex],
+                    commission: randomService.getRandomInt(1, 5),
+                    rate: rate
+                });
+
+                // обратная пара
+                currencyPairs.push({
+                    base_currency: currencyList[quoteIndex],
+                    quote_currency: currencyList[baseIndex],
+                    commission: randomService.getRandomInt(1, 5),
+                    rate: 1 / rate
+                });
+            }
+        }
 
         return currencyPairs;
     },
 
-    getCurrencyRates(currencyPairs) {
-        return currencyPairs.map(pairItem => {
-            return {
-                pair: `${pairItem.base_currency}/${pairItem.quote_currency}`,
-                rate: randomService.getRandomInt(10, 100)
-            }
-        });
+
+    getFormattedPairs(pairsList) {
+        return pairsList.map(pair => ({
+            base_currency: pair.base_currency,
+            quote_currency: pair.quote_currency,
+            commission: pair.commission,
+        }));
+    },
+
+    getFormattedRates(pairsList) {
+        return pairsList.map(pair => ({
+            pair: `${pair.base_currency}/${pair.quote_currency}`,
+            rate: pair.rate
+        }));
     },
 
     toFixed(number) {
         return +number.toFixed(2);
-    }
+    },
 }
