@@ -2,6 +2,7 @@
     <div class="currency-select">
         <div @click="toggle"
              class="currency-select__selected"
+             :class="{'_open': isOpen}"
         >
             {{ selectedCurrency ? selectedCurrency : '-' }}
         </div>
@@ -43,20 +44,30 @@
     .currency-select {
         position: relative;
         height: 50px;
-        width: 70px;
-        
+        width: 100px;
+    
         &__selected {
             display: flex;
             align-items: center;
-            justify-content: center;
+            justify-content: flex-start;
             width: 100%;
             height: 50px;
+            padding: 0 30px 0 14px;
+    
             border-radius: 0 5px 5px 0;
-            
             background-color: #5881ea;
+    
             color: #fff;
-            
+    
             cursor: pointer;
+            
+            &:after {
+                position: absolute;
+                top: 12px;
+                right: 17px;
+                content: "▼";
+                font-size: 16px;
+            }
         }
         
         &__list {
@@ -76,8 +87,7 @@
         
         &__item {
             display: block;
-            padding: 5px;
-            text-align: center;
+            padding: 5px 5px 5px 14px;
             cursor: pointer;
             
             &:hover {

@@ -4,15 +4,15 @@
         <div class="exchange-row"
              :class="{'_preloading': isDataLoading}"
         >
-            <div class="exchange-cell">
-                <div class="exchange-cell__head">
+            <div class="exchange-tile">
+                <div class="exchange-tile__head">
                     Обмен
                     <span v-if="baseCur && quoteCur">
                         {{baseCur}} на {{quoteCur}}
                     </span>
                 </div>
                 
-                <div class="exchange-cell__subhead">Вы платите</div>
+                <div class="exchange-tile__subhead">Вы платите</div>
                 <div class="currency-plate">
                     <float-input class="currency-plate__input"
                                  v-model="baseCurAmount"
@@ -25,7 +25,7 @@
                     ></currency-select>
                 </div>
                 
-                <div class="exchange-cell__subhead">Вы получаете</div>
+                <div class="exchange-tile__subhead">Вы получаете</div>
                 <div class="currency-plate">
                     <float-input class="currency-plate__input"
                                  v-model="quoteCurAmountFinal"
@@ -39,8 +39,8 @@
                 </div>
             </div>
             
-            <div class="exchange-cell">
-                <div class="exchange-cell__head">
+            <div class="exchange-tile">
+                <div class="exchange-tile__head">
                     Итого
                 </div>
                 
@@ -52,11 +52,26 @@
                 <div v-else
                      class="exchange-summary"
                 >
-                    <div class="exchange-summary__item">Вы платите {{ baseCurAmount || 0 }} {{ baseCur }}</div>
-                    <div class="exchange-summary__item">Вы получаете {{ quoteCurAmountFinal || 0 }} {{ quoteCur }}</div>
-                    <div class="exchange-summary__item _sm">Комиссия {{ commissionAmount || 0}} {{ quoteCur }}</div>
-                    <div class="exchange-summary__item">Комиссия {{ commissionText }}</div>
-                    <div class="exchange-summary__item">Курс 1 {{ baseCur }} = {{ rate }} {{ quoteCur }}</div>
+                    <div class="exchange-summary__row">
+                        <div class="exchange-summary__cell">Вы платите</div>
+                        <div class="exchange-summary__cell">{{ baseCurAmount | currency }} {{ baseCur }}</div>
+                    </div>
+                    <div class="exchange-summary__row">
+                        <div class="exchange-summary__cell">Вы получаете</div>
+                        <div class="exchange-summary__cell">{{ quoteCurAmountFinal || 0 }} {{ quoteCur }}</div>
+                    </div>
+                    <div class="exchange-summary__row">
+                        <div class="exchange-summary__cell">Комиссия</div>
+                        <div class="exchange-summary__cell"> {{ commissionAmount || 0}} {{ quoteCur }}</div>
+                    </div>
+                    <div class="exchange-summary__row">
+                        <div class="exchange-summary__cell">Комиссия %</div>
+                        <div class="exchange-summary__cell"> {{ commissionText }}</div>
+                    </div>
+                    <div class="exchange-summary__row">
+                        <div class="exchange-summary__cell">Курс</div>
+                        <div class="exchange-summary__cell">1 {{ baseCur }} = {{ rate }} {{ quoteCur }}</div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -84,7 +99,7 @@
         data() {
             return {
                 isDataLoading: true,
-                
+
                 baseCurrencyObj: null,
 
                 baseCur: null,
@@ -106,15 +121,15 @@
             apiRatesEndpoint() {
                 return this.$store.state.apiRatesEndpoint;
             },
-            
+
             baseCurrencyList() {
                 return this.baseCurrencyObj ? Object.keys(this.baseCurrencyObj) : [];
             },
-            
+
             quoteCurrencyList() {
                 return this.baseCurrencyObj && this.baseCur ? Object.keys(this.baseCurrencyObj[this.baseCur]) : [];
             },
-            
+
             commission() {
                 return this.baseCurrencyObj && this.isCurrenciesSelected
                     ? this.baseCurrencyObj[this.baseCur][this.quoteCur]['commission']
@@ -148,7 +163,7 @@
             },
 
             calcQuoteDirection() {
-                if (!this.isCurrenciesSelected) return;
+                if (!this.isCurrenciesSelected || this.baseCurAmount === null) return;
 
                 this.quoteCurAmount = currencyService.toFixed(this.baseCurAmount * this.rate);
                 this.commissionAmount = currencyService.toFixed(this.quoteCurAmount * this.commission / 100);
@@ -162,15 +177,15 @@
                 this.commissionAmount = currencyService.toFixed(this.quoteCurAmount - this.quoteCurAmountFinal);
                 this.baseCurAmount = currencyService.toFixed(this.quoteCurAmount / this.rate);
             },
-            
+
             createBaseListFromPairs(pairsList) {
                 const baseCurObj = {};
-                
+
                 pairsList.forEach(pair => {
                     const baseCur = pair.base_currency;
                     const quoteCur = pair.quote_currency;
-                    
-                    if( !(baseCur in baseCurObj) ) {
+
+                    if (!(baseCur in baseCurObj)) {
                         baseCurObj[baseCur] = {};
                     }
                     baseCurObj[baseCur][quoteCur] = {
@@ -180,10 +195,10 @@
 
                 this.baseCurrencyObj = baseCurObj;
             },
-            
+
             applyNewRates(ratesList) {
-                if(!this.baseCurrencyObj) return;
-                
+                if (!this.baseCurrencyObj) return;
+
                 Object.keys(this.baseCurrencyObj).forEach(baseCur => {
                     Object.keys(this.baseCurrencyObj[baseCur]).forEach(quoteCur => {
                         const exactRateItem = ratesList.find(rateItem => rateItem.pair === `${baseCur}/${quoteCur}`);
@@ -194,13 +209,13 @@
         },
 
         created() {
-            if(!process.client) return;
-            
+            if (!process.client) return;
+
             const promisePairs = this.$axios.$get(this.apiPairsEndpoint);
             const promiseRates = this.$axios.$get(this.apiRatesEndpoint);
-            
-            Promise.all([ promisePairs, promiseRates ])
-                .then( ([ pairsList, ratesList ]) => {
+
+            Promise.all([promisePairs, promiseRates])
+                .then(([pairsList, ratesList]) => {
                     this.createBaseListFromPairs(pairsList);
                     this.applyNewRates(ratesList)
                 })
@@ -235,12 +250,17 @@
     
     .exchange-row {
         position: relative;
-        display: flex;
-        justify-content: space-between;
-        
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        grid-column-gap: 40px;
     }
     
-    .exchange-cell {
+    .exchange-tile {
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        padding: 30px;
+        background-color: #fff;
+        box-shadow: 0 0 20px 0px rgba(0, 0, 0, .1);
         
         &__head {
             margin-bottom: 40px;
@@ -256,11 +276,6 @@
             margin-bottom: 10px;
             
         }
-        
-        flex-basis: 47%;
-        border: 1px solid #ccc;
-        border-radius: 5px;
-        padding: 30px;
     }
     
     .exchange-summary-empty {
@@ -269,7 +284,9 @@
     }
     
     .exchange-summary {
-        &__item {
+        &__row {
+            display: flex;
+            justify-content: space-between;
             font-size: 20px;
             margin-bottom: 10px;
             
@@ -283,7 +300,7 @@
     
     .currency-plate {
         position: relative;
-        padding-right: 70px;
+        padding-right: 100px;
         margin-bottom: 40px;
         
         &:last-child {
@@ -306,8 +323,6 @@
             border-radius: 5px 0 0 5px;
             
             font: inherit;
-            
-            
             transition: all linear 150ms;
             @include placeholder-color(#aaa);
             

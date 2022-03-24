@@ -16,6 +16,7 @@ html {
 
   font-family: Verdana, sans-serif;
   color: #272727;
+  background-color: #F5F5F5;
 }
 
 ul, ol {
@@ -130,7 +131,7 @@ a {
   padding: 2px 5px;
   min-width: 60px;
   border: 1px solid cornflowerblue;
-  background-color: transparentize(cornflowerblue, .9);
+  background-color: #fff;
 
   border-radius: 4px;
   margin: 8px 10px 8px 0;
@@ -191,3 +192,5 @@ a {
     transform: translate(-50%, -50%);
   }
 }
+
+

@@ -6,8 +6,6 @@
 
 <script>
     export default {
-        layout: 'generator',
-
         meta: {
             ruName: 'Генератор'
         }
