@@ -2,6 +2,7 @@
     <div v-cloak>
         <div class="l-container">
             <h2>Добрый день!</h2>
+            
             <div class="info-section" v-if="!isGeneratedDataReady && !isEndpointsCreated">
                 <p>
                     Для начала работы необходимо сгенерировать списки валют и endpoints для их получения
@@ -22,29 +23,38 @@
                 </nuxt-link>
             </div>
             
-            <div class="info-section" v-else>
-                <p>
-                    Endpoints созданы, но вы можете их обновить
-                </p>
-                <nuxt-link class="button"
-                           to="/generator/"
-                >Перейти к обновлению
-                </nuxt-link>
-            </div>
+            <template v-else>
+                <div class="info-section" >
+                    <p>
+                        Endpoints созданы, но вы можете их обновить c другими валютами
+                    </p>
+                    <nuxt-link class="button"
+                               to="/generator/"
+                    >Перейти к обновлению
+                    </nuxt-link>
+                </div>
     
-            <div class="info-section" v-if="isEndpointsCreated">
-                <p>
-                    Endpoints для получения данных обмена созданы, можно перейти к обмену
-                </p>
-                <p>
-                    <a target="_blank" :href="apiPairsEndpoint">{{apiPairsEndpoint}}</a> <br>
-                    <a target="_blank" :href="apiRatesEndpoint">{{apiRatesEndpoint}}</a>
-                </p>
-                <nuxt-link class="button _green"
-                           to="/exchange/"
-                >Перейти к обмену
-                </nuxt-link>
-            </div>
+                <div class="info-section">
+                    <p>
+                        Endpoints для получения данных обмена созданы, можно перейти к обмену
+                    </p>
+                    <p>
+                        Получение списка валютных пар и комиссий <br>
+                        <a target="_blank" :href="apiPairsEndpoint">{{apiPairsEndpoint}}</a>
+                    </p>
+                    <p>
+                        Получение списка пара-курс <br>
+                        <a target="_blank" :href="apiRatesEndpoint">{{apiRatesEndpoint}}</a>
+                    </p>
+                    
+                    <nuxt-link class="button _green"
+                               to="/exchange/"
+                    >Перейти к обмену
+                    </nuxt-link>
+                </div>
+                
+            </template>
+            
         </div>
         
     </div>
@@ -58,19 +68,15 @@
             ruName: 'Главная'
         },
 
-        components: {},
-
-        data() {
-            return {}
-        },
-
         computed: {
             isGeneratedDataReady() {
                 return this.$store.getters.isGeneratedDataReady;
             },
+            
             isEndpointsCreated() {
                 return this.$store.getters.isEndpointsCreated;
             },
+            
             apiPairsEndpoint() {
                 return this.$store.state.apiPairsEndpoint;
             },

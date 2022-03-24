@@ -74,6 +74,7 @@ export default {
         }));
     },
 
+    // todo удалить этот метод
     toFixed(number) {
         return +number.toFixed(2);
     },

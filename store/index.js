@@ -63,7 +63,7 @@ export default {
             localStorage.setItem('currencyPairs', JSON.stringify(payload));
         },
 
-        setDataFromLS(context) {
+        initStoreFromLS(context) {
             const currencyListData = localStorage.getItem('currencyList');
             const pairsListData = localStorage.getItem('currencyPairs');
 
@@ -83,7 +83,6 @@ export default {
         },
 
         setPairsEndpoint(context, payload) {
-            console.log(payload);
             context.commit('setPairsEndpoint', payload);
             localStorage.setItem('apiPairsEndpoint', JSON.stringify(payload));
         },

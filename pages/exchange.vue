@@ -98,6 +98,15 @@
         },
 
         computed: {
+
+            apiPairsEndpoint() {
+                return this.$store.state.apiPairsEndpoint;
+            },
+
+            apiRatesEndpoint() {
+                return this.$store.state.apiRatesEndpoint;
+            },
+            
             baseCurrencyList() {
                 return this.baseCurrencyObj ? Object.keys(this.baseCurrencyObj) : [];
             },
@@ -184,17 +193,16 @@
             }
         },
 
-        mounted() {
-            // todo с local storage костыль заменить
-            const apiPairsEndpoint = JSON.parse(localStorage.getItem('apiPairsEndpoint'));
-            const apiRatesEndpoint = JSON.parse(localStorage.getItem('apiRatesEndpoint'));
+        created() {
+            if(!process.client) return;
             
-            Promise.all([this.$axios.$get(apiPairsEndpoint), this.$axios.$get(apiRatesEndpoint)])
-                .then(([pairsList, ratesList]) => {
-                    
+            const promisePairs = this.$axios.$get(this.apiPairsEndpoint);
+            const promiseRates = this.$axios.$get(this.apiRatesEndpoint);
+            
+            Promise.all([ promisePairs, promiseRates ])
+                .then( ([ pairsList, ratesList ]) => {
                     this.createBaseListFromPairs(pairsList);
                     this.applyNewRates(ratesList)
-                    
                 })
                 .catch(e => {
                     console.log('Ошибка при загрузке данных для обмена', e);

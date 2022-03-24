@@ -14,6 +14,12 @@
     export default {
         components: {
             TheHeader
+        },
+        
+        created() {
+            if(process.client) {
+                this.$store.dispatch('initStoreFromLS');
+            }
         }
     }
 </script>
