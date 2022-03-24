@@ -1,8 +1,8 @@
 import Vue from 'vue';
 
-Vue.filter('currency', value => {
+Vue.filter('toFixed', (value, digitNumber = 2) => {
     console.log('filter', value);
     return value ?
-        +value.toFixed(2) :
+        +value.toFixed(digitNumber) :
         0;
 });
