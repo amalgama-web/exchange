@@ -3,7 +3,7 @@
         <div @click="toggle"
              class="currency-select__selected"
         >
-            {{ selected ? selected : '-' }}
+            {{ selectedCurrency ? selectedCurrency : '-' }}
         </div>
         <ul v-show="isOpen"
             class="currency-select__list"
@@ -12,11 +12,7 @@
                 @click="select(currency)"
                 class="currency-select__item"
             >
-                <span v-if="!isDisabled(currency)"
-                      class="currency-select__item-inner"
-                >
-                    {{currency}}
-                </span>
+                {{currency}}
             </li>
         </ul>
     </div>
@@ -24,11 +20,10 @@
 
 <script>
     export default {
-        props: ['currencyList', 'disabledList'],
+        props: ['currencyList', 'selectedCurrency'],
         data() {
             return {
-                isOpen: false,
-                selected: null
+                isOpen: false
             }
         },
 
@@ -38,11 +33,7 @@
             },
             select(currency) {
                 this.isOpen = false;
-                this.selected = currency;
                 this.$emit('currency-select', currency);
-            },
-            isDisabled(currency) {
-                return this.disabledList.includes(currency);
             }
         }
     }
@@ -84,6 +75,8 @@
         }
         
         &__item {
+            display: block;
+            padding: 5px;
             text-align: center;
             cursor: pointer;
             
@@ -91,10 +84,6 @@
                 background-color: #5881ea;
                 color: #fff;
             }
-        }
-        &__item-inner {
-            display: block;
-            padding: 5px;
         }
     }
 

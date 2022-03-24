@@ -2,28 +2,51 @@
     <div v-cloak>
         <div class="l-container">
             <h2>Добрый день!</h2>
-            <p v-if="!isGeneratedDataReady">
-                Для начала работы необходимо сгенерировать списки валют для обмена
-            </p>
-            <p v-else>
-                Списки валют сгенерированы, но вы можете их обновить
-            </p>
+            <div class="info-section" v-if="!isGeneratedDataReady && !isEndpointsCreated">
+                <p>
+                    Для начала работы необходимо сгенерировать списки валют и endpoints для их получения
+                </p>
+                <nuxt-link class="button"
+                           to="/generator"
+                >Перейти к генерации
+                </nuxt-link>
+            </div>
             
-            <nuxt-link class="button"
-                       to="/generator/"
-            >Перейти к генерации
-            </nuxt-link>
+            <div class="info-section" v-else-if="isGeneratedDataReady && !isEndpointsCreated">
+                <p>
+                    Списки валют сгенерированы, но еще не отправлены в API
+                </p>
+                <nuxt-link class="button"
+                           to="/generator/format-and-save"
+                >Перейти к отправке
+                </nuxt-link>
+            </div>
+            
+            <div class="info-section" v-else>
+                <p>
+                    Endpoints созданы, но вы можете их обновить
+                </p>
+                <nuxt-link class="button"
+                           to="/generator/"
+                >Перейти к обновлению
+                </nuxt-link>
+            </div>
+    
+            <div class="info-section" v-if="isEndpointsCreated">
+                <p>
+                    Endpoints для получения данных обмена созданы, можно перейти к обмену
+                </p>
+                <p>
+                    <a target="_blank" :href="apiPairsEndpoint">{{apiPairsEndpoint}}</a> <br>
+                    <a target="_blank" :href="apiRatesEndpoint">{{apiRatesEndpoint}}</a>
+                </p>
+                <nuxt-link class="button _green"
+                           to="/exchange/"
+                >Перейти к обмену
+                </nuxt-link>
+            </div>
         </div>
         
-        <div v-if="isGeneratedDataReady"
-             class="l-container"
-        >
-            <h2>Данные сгенерированы, можно перейти к обмену</h2>
-            <nuxt-link class="button _green"
-                       to="/exchange/"
-            >Перейти к обмену
-            </nuxt-link>
-        </div>
     </div>
 
 </template>
@@ -44,11 +67,26 @@
         computed: {
             isGeneratedDataReady() {
                 return this.$store.getters.isGeneratedDataReady;
-            }
+            },
+            isEndpointsCreated() {
+                return this.$store.getters.isEndpointsCreated;
+            },
+            apiPairsEndpoint() {
+                return this.$store.state.apiPairsEndpoint;
+            },
+
+            apiRatesEndpoint() {
+                return this.$store.state.apiRatesEndpoint;
+            },
         }
 
 
     }
 </script>
 
-<style></style>
+<style lang="scss">
+    .info-section {
+        margin-bottom: 40px;
+    }
+    
+</style>

@@ -25,11 +25,12 @@
 
         methods: {
             onInput(e) {
-                // todo продумать лучший вариант для float
                 let newValue = e.target.value.replace(/[^\d.]|^\./g, '');
                 let matchDot = newValue.match(/\./g);
-                if (newValue && newValue[newValue.length - 1] !== '.' || matchDot && matchDot.length > 1) {
-                    newValue = parseFloat(newValue);
+                if(matchDot && matchDot.length > 1) {
+                    const dotPos = newValue.indexOf('.');
+                    newValue = newValue.replace(/\./g, '');
+                    newValue = `${newValue.slice(0, dotPos)}.${newValue.slice(dotPos)}`;
                 }
                 e.target.value = newValue;
             },

@@ -67,7 +67,7 @@
 
         methods: {
             generatePairs() {
-                this.$store.dispatch('setCurrencyPairs', currencyService.getCurrencyPairs(this.currencyList));
+                this.$store.dispatch('setCurrencyPairsList', currencyService.getCurrencyPairs(this.currencyList));
             }
         },
     }

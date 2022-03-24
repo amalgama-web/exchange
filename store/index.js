@@ -8,13 +8,20 @@ export default {
     state() {
         return {
             currencyList: [],
-            currencyPairs: []
+            currencyPairs: [],
+
+            apiPairsEndpoint: null,
+            apiRatesEndpoint: null
         }
     },
 
     getters: {
         isGeneratedDataReady(state) {
             return !!(state.currencyList.length && state.currencyPairs.length);
+        },
+
+        isEndpointsCreated(state) {
+            return !!(state.apiPairsEndpoint && state.apiRatesEndpoint);
         }
     },
 
@@ -23,8 +30,16 @@ export default {
             state.currencyList = payload;
         },
 
-        setCurrencyPairs(state, payload) {
+        setCurrencyPairsList(state, payload) {
             state.currencyPairs = payload;
+        },
+
+        setPairsEndpoint(state, payload) {
+            state.apiPairsEndpoint = payload;
+        },
+
+        setRatesEndpoint(state, payload) {
+            state.apiRatesEndpoint = payload;
         }
     },
 
@@ -34,26 +49,48 @@ export default {
             context.commit('setCurrencyList', payload);
             localStorage.setItem('currencyList', JSON.stringify(payload));
 
-            // remove old generated pairs
-            context.commit('setCurrencyPairs', []);
+            // remove old generated pairs and endpoints
+            context.commit('setCurrencyPairsList', []);
+            context.commit('setPairsEndpoint', null);
+            context.commit('setRatesEndpoint', null);
             localStorage.removeItem('currencyPairs');
+            localStorage.removeItem('apiPairsEndpoint');
+            localStorage.removeItem('apiRatesEndpoint');
         },
 
-        setCurrencyPairs(context, payload) {
-            context.commit('setCurrencyPairs', payload);
+        setCurrencyPairsList(context, payload) {
+            context.commit('setCurrencyPairsList', payload);
             localStorage.setItem('currencyPairs', JSON.stringify(payload));
         },
 
-        setCurrencyListsFromLS(context) {
-            const listData = localStorage.getItem('currencyList');
-            const pairsData = localStorage.getItem('currencyPairs');
+        setDataFromLS(context) {
+            const currencyListData = localStorage.getItem('currencyList');
+            const pairsListData = localStorage.getItem('currencyPairs');
 
-            if(!listData) return;
-            context.commit('setCurrencyList', JSON.parse(listData) );
+            const apiPairsEndpoint = localStorage.getItem('apiPairsEndpoint');
+            const apiRatesEndpoint = localStorage.getItem('apiRatesEndpoint');
 
-            if(!pairsData) return;
-            context.commit('setCurrencyPairs', JSON.parse(pairsData) );
+            if(apiPairsEndpoint && apiRatesEndpoint) {
+                context.commit('setPairsEndpoint', JSON.parse(apiPairsEndpoint));
+                context.commit('setRatesEndpoint', JSON.parse(apiRatesEndpoint));
+            }
 
+            if(!currencyListData) return;
+            context.commit('setCurrencyList', JSON.parse(currencyListData) );
+
+            if(!pairsListData) return;
+            context.commit('setCurrencyPairsList', JSON.parse(pairsListData) );
+        },
+
+        setPairsEndpoint(context, payload) {
+            console.log(payload);
+            context.commit('setPairsEndpoint', payload);
+            localStorage.setItem('apiPairsEndpoint', JSON.stringify(payload));
+        },
+
+        setRatesEndpoint(context, payload) {
+            context.commit('setRatesEndpoint', payload);
+            localStorage.setItem('apiRatesEndpoint', JSON.stringify(payload));
         },
 
     },

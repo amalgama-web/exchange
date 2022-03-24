@@ -5,14 +5,14 @@
         
         <div class="format-demonstration">
             <div class="format-demonstration__col">
-                <h4>Список пар и комиссия</h4>
+                <h4>Список пар и комиссий</h4>
                 <div class="code-example">
                     {<br>&nbsp;&nbsp;"base_currency": "USD",<br>&nbsp;&nbsp;"quote_currency": "EUR",<br>
                     &nbsp;&nbsp;"commission": 3<br>}
                 </div>
             </div>
             <div class="format-demonstration__col">
-                <h4>Список пара - курс</h4>
+                <h4>Список пара-курс</h4>
                 <div class="code-example">
                     {<br>&nbsp;&nbsp;"pair": "USD/EUR",<br>&nbsp;&nbsp;"rate": 1.5<br>}
                 </div>
@@ -24,12 +24,26 @@
             >Форматировать и сохранить
             </button>
             
-            <nuxt-link v-if="isDataLoaded"
+            <nuxt-link v-if="isEndpointsCreated"
                        class="button _green"
-                       to="/generator/success"
-            >Далее
+                       to="/exchange/"
+            >Перейти к обмену
             </nuxt-link>
         </div>
+    
+        <template v-if="isEndpointsCreated">
+            <h2>Сформированы два endpoint'а для получения данных при обмене</h2>
+            <h4>Список пар и комиссий</h4>
+            <p>
+                <a :href="apiPairsEndpoint" target="_blank">{{apiPairsEndpoint}}</a>
+            </p>
+            <h4>Список пара-курс</h4>
+            <p>
+                <a :href="apiRatesEndpoint" target="_blank">{{apiRatesEndpoint}}</a>
+            </p>
+        </template>
+        
+        
     </div>
 </template>
 
@@ -44,13 +58,25 @@
 
         data() {
             return {
-                isDataLoaded: false
+                isLoadingInProcess: false,
             }
         },
 
         computed: {
             currencyPairs() {
                 return this.$store.state.currencyPairs;
+            },
+            
+            isEndpointsCreated() {
+                return this.apiPairsEndpoint && this.apiPairsEndpoint;
+            },
+
+            apiPairsEndpoint() {
+                return this.$store.state.apiPairsEndpoint;
+            },
+
+            apiRatesEndpoint() {
+                return this.$store.state.apiRatesEndpoint;
             },
         },
 
@@ -59,25 +85,33 @@
                 const formattedPairs = currencyService.getFormattedPairs(this.currencyPairs);
                 const formattedRates = currencyService.getFormattedRates(this.currencyPairs);
 
-                this.saveDataInFirebase(formattedPairs, formattedRates);
+                this.sentDataToFirebase(formattedPairs, formattedRates);
             },
             
-            saveDataInFirebase(pairsData, ratesData) {
-                const url = createUrlService.currencyPairs();
+            sentDataToFirebase(pairsData, ratesData) {
 
+                this.isLoadingInProcess = true;
                 
-                this.$axios.$post(url, pairsData)
-                    .then(data => {
-                        const url = createUrlService.currencyRates();
-                        return this.$axios.$put(url, {
-                            [data.name]: ratesData
-                        });
+                const urlPairs = createUrlService.currencyPairs();
+                const urlRates = createUrlService.currencyRates();
+                
+                const promisePairs = this.$axios.$post(urlPairs, pairsData);
+                const promiseRates = this.$axios.$post(urlRates, ratesData);
+
+                Promise.all([promisePairs, promiseRates])
+                    .then( ([responsePairs, responseRates]) => {
+                        const pairsEndpoint = createUrlService.currencyPairs(responsePairs.name);
+                        const ratesEndpoint = createUrlService.currencyRates(responseRates.name);
+
+                        this.$store.dispatch('setPairsEndpoint', pairsEndpoint);
+                        this.$store.dispatch('setRatesEndpoint', ratesEndpoint);
                     })
                     .catch(e => {
                         console.log('Ошибка загрузки данных для обмена валют', e);
+                    })
+                    .finally(() => {
+                        this.isLoadingInProcess = false;
                     });
-
-                this.isDataLoaded = true;
             }
         }
 
