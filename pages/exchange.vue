@@ -8,15 +8,39 @@
                     span(v-if='baseCur && quoteCur')
                         | {{baseCur}} на {{quoteCur}}
                 .exchange-tile__subhead Вы платите
-                currency-exchanger(v-model='baseCurAmount' :selected='baseCur' :list='baseCurrencyList' :disabled='!isCurrenciesSelected' @change='calcQuoteDirection' @select='selectBaseCur')
+                currency-exchanger(
+                    v-model='baseCurAmount'
+                    :selected='baseCur'
+                    :list='baseCurrencyList'
+                    :disabled='!isCurrenciesSelected'
+                    @change='calcQuoteDirection'
+                    @select='selectBaseCur'
+                )
                 .exchange-tile__subhead Вы получаете
-                currency-exchanger(v-model='quoteCurAmountFinal' :selected='quoteCur' :list='quoteCurrencyList' :disabled='!isCurrenciesSelected' @change='calcBaseDirection' @select='selectQuoteCur')
+                currency-exchanger(
+                    v-model='quoteCurAmountFinal'
+                    :selected='quoteCur'
+                    :list='quoteCurrencyList'
+                    :disabled='!isCurrenciesSelected'
+                    @change='calcBaseDirection'
+                    @select='selectQuoteCur'
+                )
             .exchange-tile
                 .exchange-tile__head
                     | Итого
                 .exchange-summary-empty(v-if='!isCurrenciesSelected')
                     | Выберите валюты для обмена
-                exchange-summary(v-else='' :base-cur='baseCur' :quote-cur='quoteCur' :base-cur-amount='baseCurAmount' :quote-cur-amount-final='quoteCurAmountFinal' :commission-amount='commissionAmount' :commission-text="commission + '%'" :rate='rate' :class="{'_preloading': isAdditionalRatesLoading}")
+                exchange-summary(
+                    v-else=''
+                    :base-cur='baseCur'
+                    :quote-cur='quoteCur'
+                    :base-cur-amount='baseCurAmount'
+                    :quote-cur-amount-final='quoteCurAmountFinal'
+                    :commission-amount='commissionAmount'
+                    :commission-text="commission + '%'"
+                    :rate='rate'
+                    :class="{'_preloading': isAdditionalRatesLoading}"
+                )
         .exchange-footer
             button.button(@click='exchange' :disabled='!exchangeEnable')
                 | Обменять
@@ -43,7 +67,7 @@
                 quoteCurAmount: null,
                 quoteCurAmountFinal: null,
                 commissionAmount: null,
-                
+
                 updateRatesTimer: null
             }
         },
@@ -154,7 +178,7 @@
                     });
                 });
             },
-            
+
         },
 
         created() {
@@ -162,9 +186,9 @@
 
             const startUpdateCounter = () => {
                 this.updateRatesTimer = setInterval(() => {
-                    
+
                     this.isAdditionalRatesLoading = true;
-                    
+
                     this.$axios.$get(this.apiRatesEndpoint)
                         .then((updatedRates) => {
                             this.applyNewRates(updatedRates);
@@ -176,13 +200,13 @@
                         .finally(() => {
                             this.isAdditionalRatesLoading = false;
                         });
-                    
+
                 }, 30000);
             };
 
             const promisePairs = this.$axios.$get(this.apiPairsEndpoint);
             const promiseRates = this.$axios.$get(this.apiRatesEndpoint);
-            
+
             Promise.all([promisePairs, promiseRates])
                 .then(([pairsList, ratesList]) => {
                     this.createBaseListFromPairs(pairsList);
@@ -195,7 +219,7 @@
                 .finally(() => {
                     this.isInitialDataLoading = false;
                 });
-            
+
         },
 
         destroyed() {

@@ -1,13 +1,21 @@
 <template lang="pug">
     .currency-exchanger
-        float-input.currency-exchanger__input(:value='value' @change="$emit('change', $event)" :disabled='disabled')
-        currency-select(:list='list' :selected='selected' @select="$emit('select', $event)")
+        float-input.currency-exchanger__input(
+            :value='value'
+            @change="$emit('change', $event)"
+            :disabled='disabled'
+        )
+        currency-select(
+            :list='list'
+            :selected='selected'
+            @select="$emit('select', $event)"
+        )
 </template>
 
 <script>
     export default {
         name: 'CurrencyExchanger',
-        
+
         model: {
             prop: 'value',
             event: 'change'

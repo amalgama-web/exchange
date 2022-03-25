@@ -4,26 +4,26 @@
         .format-demonstration
             .format-demonstration__col
                 h4 Список пар и комиссий
-                .code-example
-                    | {
+                pre.code-example
+                    |{
                     br
-                    |   "base_currency": "USD",
+                    |    "base_currency": "USD",
                     br
-                    |   "quote_currency": "EUR",
+                    |    "quote_currency": "EUR",
                     br
-                    |                       "commission": 3
+                    |    "commission": 3
                     br
-                    | }
+                    |}
             .format-demonstration__col
                 h4 Список пара-курс
-                .code-example
-                    | {
+                pre.code-example
+                    |{
                     br
-                    |   "pair": "USD/EUR",
+                    |    "pair": "USD/EUR",
                     br
-                    |   "rate": 1.5
+                    |    "rate": 1.5
                     br
-                    | }
+                    |}
         .row-buttons
             button.button(:class="{'_preloading': isDataLoading}" @click='formatingData')
                 | Форматировать и сохранить
