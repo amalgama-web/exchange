@@ -1,64 +1,60 @@
 <template>
-    <div v-cloak>
-        <div class="l-container">
-            <h2>Добрый день!</h2>
-            
-            <div class="info-section" v-if="!isGeneratedDataReady && !isEndpointsCreated">
-                <p>
-                    Для начала работы необходимо сгенерировать списки валют и endpoints для их получения
-                </p>
-                <nuxt-link class="button"
-                           to="/generator"
-                >Перейти к генерации
-                </nuxt-link>
-            </div>
-            
-            <div class="info-section" v-else-if="isGeneratedDataReady && !isEndpointsCreated">
-                <p>
-                    Списки валют сгенерированы, но еще не отправлены в API
-                </p>
-                <nuxt-link class="button"
-                           to="/generator/format-and-save"
-                >Перейти к отправке
-                </nuxt-link>
-            </div>
-            
-            <template v-else>
-                <div class="info-section" >
-                    <p>
-                        Endpoints созданы, но вы можете их обновить c другими валютами
-                    </p>
-                    <nuxt-link class="button"
-                               to="/generator/"
-                    >Перейти к обновлению
-                    </nuxt-link>
-                </div>
-    
-                <div class="info-section">
-                    <p>
-                        Endpoints для получения данных обмена созданы, можно перейти к обмену
-                    </p>
-                    <p>
-                        Получение списка валютных пар и комиссий <br>
-                        <a target="_blank" :href="apiPairsEndpoint">{{apiPairsEndpoint}}</a>
-                    </p>
-                    <p>
-                        Получение списка пара-курс <br>
-                        <a target="_blank" :href="apiRatesEndpoint">{{apiRatesEndpoint}}</a>
-                    </p>
-                    
-                    <nuxt-link class="button _green"
-                               to="/exchange/"
-                    >Перейти к обмену
-                    </nuxt-link>
-                </div>
-                
-            </template>
-            
+    <div class="l-container">
+        <h2>Добрый день!</h2>
+        
+        <div class="info-section" v-if="!isGeneratedDataReady && !isEndpointsCreated">
+            <p>
+                Для начала работы необходимо сгенерировать списки валют и endpoints для их получения
+            </p>
+            <nuxt-link class="button"
+                       to="/generator"
+            >Перейти к генерации
+            </nuxt-link>
         </div>
         
+        <div class="info-section" v-else-if="isGeneratedDataReady && !isEndpointsCreated">
+            <p>
+                Списки валют сгенерированы, но еще не отправлены в API
+            </p>
+            <nuxt-link class="button"
+                       to="/generator/format-and-save"
+            >Перейти к отправке
+            </nuxt-link>
+        </div>
+        
+        <template v-else>
+            <div class="info-section" >
+                <p>
+                    Endpoints созданы, но вы можете их обновить c другими валютами
+                </p>
+                <nuxt-link class="button"
+                           to="/generator/"
+                >Перейти к обновлению
+                </nuxt-link>
+            </div>
+            
+            <div class="info-section">
+                <p>
+                    Endpoints для получения данных обмена созданы, можно перейти к обмену
+                </p>
+                <p>
+                    Получение списка валютных пар и комиссий <br>
+                    <a target="_blank" :href="apiPairsEndpoint">{{apiPairsEndpoint}}</a>
+                </p>
+                <p>
+                    Получение списка пара-курс <br>
+                    <a target="_blank" :href="apiRatesEndpoint">{{apiRatesEndpoint}}</a>
+                </p>
+                
+                <nuxt-link class="button _green"
+                           to="/exchange/"
+                >Перейти к обмену
+                </nuxt-link>
+            </div>
+        
+        </template>
+    
     </div>
-
 </template>
 
 <script>

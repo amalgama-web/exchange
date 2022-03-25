@@ -9,6 +9,8 @@
 
 <script>
     export default {
+        name: 'FloatInput',
+        
         model: {
             prop: 'value',
             event: 'change'
@@ -17,10 +19,6 @@
         props: {
             'value': Number,
             'disabled': Boolean,
-        },
-
-        data() {
-            return {}
         },
 
         methods: {
@@ -34,7 +32,7 @@
                 }
                 e.target.value = newValue;
             },
-        }
+        },
     }
 </script>
 

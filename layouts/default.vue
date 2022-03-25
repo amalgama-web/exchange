@@ -1,9 +1,7 @@
 <template>
     <div class="wrapper">
         <the-header></the-header>
-    
-        <base-breadcrumbs></base-breadcrumbs>
-    
+        <TheBreadcrumbs></TheBreadcrumbs>
         <Nuxt />
     </div>
 </template>

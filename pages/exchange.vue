@@ -1,6 +1,8 @@
 <template>
     <div class="l-container">
+        
         <h3>Обмен</h3>
+        
         <div class="exchange-row"
              :class="{'_preloading': isDataLoading}"
         >
@@ -13,30 +15,25 @@
                 </div>
                 
                 <div class="exchange-tile__subhead">Вы платите</div>
-                <div class="currency-plate">
-                    <float-input class="currency-plate__input"
-                                 v-model="baseCurAmount"
-                                 @change="calcQuoteDirection"
-                                 :disabled="!isCurrenciesSelected"
-                    ></float-input>
-                    <currency-select :currency-list="baseCurrencyList"
-                                     :selected-currency="baseCur"
-                                     @currency-select="selectBaseCur"
-                    ></currency-select>
-                </div>
+                
+                <CurrencyExchanger v-model="baseCurAmount"
+                                   :selected="baseCur"
+                                   :list="baseCurrencyList"
+                                   :disabled="!isCurrenciesSelected"
+                                   @change="calcQuoteDirection"
+                                   @select="selectBaseCur"
+                ></CurrencyExchanger>
                 
                 <div class="exchange-tile__subhead">Вы получаете</div>
-                <div class="currency-plate">
-                    <float-input class="currency-plate__input"
-                                 v-model="quoteCurAmountFinal"
-                                 @change="calcBaseDirection"
-                                 :disabled="!isCurrenciesSelected"
-                    ></float-input>
-                    <currency-select :currency-list="quoteCurrencyList"
-                                     :selected-currency="quoteCur"
-                                     @currency-select="selectQuoteCur"
-                    ></currency-select>
-                </div>
+                
+                <CurrencyExchanger v-model="quoteCurAmountFinal"
+                                   :selected="quoteCur"
+                                   :list="quoteCurrencyList"
+                                   :disabled="!isCurrenciesSelected"
+                                   @change="calcBaseDirection"
+                                   @select="selectQuoteCur"
+                ></CurrencyExchanger>
+            
             </div>
             
             <div class="exchange-tile">
@@ -49,31 +46,27 @@
                 >
                     Выберите валюты для обмена
                 </div>
-                <div v-else
-                     class="exchange-summary"
-                >
-                    <div class="exchange-summary__row">
-                        <div class="exchange-summary__cell">Вы платите</div>
-                        <div class="exchange-summary__cell">{{ baseCurAmount | toFixed }} {{ baseCur }}</div>
-                    </div>
-                    <div class="exchange-summary__row">
-                        <div class="exchange-summary__cell">Вы получаете</div>
-                        <div class="exchange-summary__cell">{{ quoteCurAmountFinal | toFixed }} {{ quoteCur }}</div>
-                    </div>
-                    <div class="exchange-summary__row">
-                        <div class="exchange-summary__cell">Комиссия</div>
-                        <div class="exchange-summary__cell"> {{ commissionAmount | toFixed }} {{ quoteCur }}</div>
-                    </div>
-                    <div class="exchange-summary__row">
-                        <div class="exchange-summary__cell">Комиссия %</div>
-                        <div class="exchange-summary__cell">{{ commissionText }}</div>
-                    </div>
-                    <div class="exchange-summary__row">
-                        <div class="exchange-summary__cell">Курс</div>
-                        <div class="exchange-summary__cell">1 {{ baseCur }} = {{ rate | toFixed(8)  }} {{ quoteCur }}</div>
-                    </div>
-                </div>
+                
+                <ExchangeSummary v-else
+                                 :base-cur="baseCur"
+                                 :quote-cur="quoteCur"
+                                 :base-cur-amount="baseCurAmount"
+                                 :quote-cur-amount-final="quoteCurAmountFinal"
+                                 :commission-amount="commissionAmount"
+                                 :commission-text="commission + '%'"
+                                 :rate="rate"
+                                 :class="{'_preloading': isAdditionalRatesLoading}"
+                ></ExchangeSummary>
+            
             </div>
+        </div>
+        
+        <div class="exchange-footer">
+            <button @click="exchange"
+                    :disabled="!exchangeEnable"
+                    class="button"
+            >Обменять
+            </button>
         </div>
     
     
@@ -82,23 +75,15 @@
 
 
 <script>
-    import currencySelect from '~/components/CurrencySelect.vue';
-    import floatInput from '~/components/FloatInput.vue';
-    import currencyService from "~/services/currencyService";
-
     export default {
         meta: {
             ruName: 'Страница обмена'
         },
 
-        components: {
-            currencySelect,
-            floatInput
-        },
-
         data() {
             return {
                 isDataLoading: true,
+                isAdditionalRatesLoading: false,
 
                 baseCurrencyObj: null,
 
@@ -109,6 +94,8 @@
                 quoteCurAmount: null,
                 quoteCurAmountFinal: null,
                 commissionAmount: null,
+                
+                updateRatesTimer: null
             }
         },
 
@@ -137,21 +124,32 @@
             },
 
             rate() {
+                console.log('rate computed fire');
                 return this.baseCurrencyObj && this.isCurrenciesSelected
                     ? this.baseCurrencyObj[this.baseCur][this.quoteCur]['rate']
                     : 1;
             },
 
-            commissionText() {
-                return `${this.commission}%`;
-            },
-
             isCurrenciesSelected() {
                 return !!(this.baseCur && this.quoteCur);
+            },
+
+            exchangeEnable() {
+                return this.isCurrenciesSelected && !!this.baseCurAmount;
             }
         },
 
         methods: {
+            exchange() {
+                this.$store.dispatch('exchange/confirmTransaction', {
+                    baseCurAmount: this.baseCurAmount,
+                    baseCur: this.baseCur,
+                    quoteCurAmount: this.quoteCurAmountFinal,
+                    quoteCur: this.quoteCur
+                });
+                this.$router.push({name: 'success'});
+            },
+
             selectBaseCur(currency) {
                 this.baseCur = currency;
                 this.quoteCur = null;
@@ -165,17 +163,17 @@
             calcQuoteDirection() {
                 if (!this.isCurrenciesSelected || this.baseCurAmount === null) return;
 
-                this.quoteCurAmount = currencyService.toFixed(this.baseCurAmount * this.rate);
-                this.commissionAmount = currencyService.toFixed(this.quoteCurAmount * this.commission / 100);
-                this.quoteCurAmountFinal = currencyService.toFixed(this.quoteCurAmount - this.commissionAmount);
+                this.quoteCurAmount = this.baseCurAmount * this.rate;
+                this.commissionAmount = this.quoteCurAmount * this.commission / 100;
+                this.quoteCurAmountFinal = this.quoteCurAmount - this.commissionAmount;
             },
 
-            calcBaseDirection() {
+            calcBaseDirection(param) {
                 if (!this.isCurrenciesSelected) return;
 
-                this.quoteCurAmount = currencyService.toFixed(this.quoteCurAmountFinal / (100 - this.commission) * 100);
-                this.commissionAmount = currencyService.toFixed(this.quoteCurAmount - this.quoteCurAmountFinal);
-                this.baseCurAmount = currencyService.toFixed(this.quoteCurAmount / this.rate);
+                this.quoteCurAmount = this.quoteCurAmountFinal / (100 - this.commission) * 100;
+                this.commissionAmount = this.quoteCurAmount - this.quoteCurAmountFinal;
+                this.baseCurAmount = this.quoteCurAmount / this.rate;
             },
 
             createBaseListFromPairs(pairsList) {
@@ -189,7 +187,9 @@
                         baseCurObj[baseCur] = {};
                     }
                     baseCurObj[baseCur][quoteCur] = {
-                        commission: pair.commission
+                        commission: pair.commission,
+                        // proper rates apply in applyNewRates
+                        rate: 1
                     };
                 });
 
@@ -205,19 +205,41 @@
                         this.baseCurrencyObj[baseCur][quoteCur]['rate'] = exactRateItem.rate;
                     });
                 });
-            }
+            },
+            
         },
 
         created() {
             if (!process.client) return;
 
+            const startUpdateCounter = () => {
+                this.updateRatesTimer = setInterval(() => {
+                    
+                    this.isAdditionalRatesLoading = true;
+                    
+                    this.$axios.$get(this.apiRatesEndpoint)
+                        .then((updatedRates) => {
+                            this.applyNewRates(updatedRates);
+                            this.calcQuoteDirection();
+                        })
+                        .catch(e => {
+                            console.log('Ошибка загрузки обновленных курсов валют', e);
+                        })
+                        .finally(() => {
+                            this.isAdditionalRatesLoading = false;
+                        });
+                    
+                }, 30000);
+            };
+
             const promisePairs = this.$axios.$get(this.apiPairsEndpoint);
             const promiseRates = this.$axios.$get(this.apiRatesEndpoint);
-
+            
             Promise.all([promisePairs, promiseRates])
                 .then(([pairsList, ratesList]) => {
                     this.createBaseListFromPairs(pairsList);
-                    this.applyNewRates(ratesList)
+                    this.applyNewRates(ratesList);
+                    startUpdateCounter();
                 })
                 .catch(e => {
                     console.log('Ошибка при загрузке данных для обмена', e);
@@ -225,6 +247,12 @@
                 .finally(() => {
                     this.isDataLoading = false;
                 });
+            
+        },
+
+        destroyed() {
+            clearInterval(this.updateRatesTimer);
+            this.updateRatesTimer = null;
         }
 
     }
@@ -232,22 +260,6 @@
 
 
 <style lang="scss">
-    @mixin placeholder-color($color) {
-        &::-webkit-input-placeholder {
-            color: $color;
-        }
-        &:-moz-placeholder {
-            color: $color;
-        }
-        &::-moz-placeholder {
-            color: $color;
-            opacity: 1;
-        }
-        &:-ms-input-placeholder {
-            color: $color;
-        }
-    }
-    
     .exchange-row {
         position: relative;
         display: grid;
@@ -283,70 +295,12 @@
         text-align: center;
     }
     
-    .exchange-summary {
-        &__row {
-            display: flex;
-            justify-content: space-between;
-            font-size: 20px;
-            margin-bottom: 10px;
-            border-bottom: 1px dotted #aaaaaa;
-            
-            &._sm {
-                font-size: 14px;
-                color: #aaaaaa;
-                margin-bottom: 5px;
-            }
-        }
-        &__cell {
-            background-color: #fff;
-            position: relative;
-            top: 9px;
-            
-            &:first-child {
-                padding-right: 5px;
-            }
-            &:last-child {
-                padding-left: 5px;
-            }
-        }
-    }
-    
-    .currency-plate {
-        position: relative;
-        padding-right: 100px;
-        margin-bottom: 40px;
+    .exchange-footer {
+        margin: 40px 0;
+        text-align: right;
         
-        &:last-child {
-            margin-bottom: 0;
-        }
-        
-        .currency-select {
-            position: absolute;
-            right: 0;
-            top: 0;
-        }
-        
-        &__input {
-            height: 50px;
-            border: 1px solid #bbb;
-            outline: none !important;
-            display: block;
-            width: 100%;
-            padding: 0 10px;
-            border-radius: 5px 0 0 5px;
-            
-            font: inherit;
-            transition: all linear 150ms;
-            @include placeholder-color(#aaa);
-            
-            &:focus {
-                border-color: darken(#bbb, 10%);
-            }
-            
-            &[disabled] {
-                background-color: #eee;
-                cursor: not-allowed;
-            }
+        .button {
+            width: 300px;
         }
     }
 </style>

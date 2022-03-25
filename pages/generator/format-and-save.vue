@@ -1,6 +1,5 @@
 <template>
     <div>
-        
         <h2>Форматируем данные и сохраняем их для API двумя списками в формате</h2>
         
         <div class="format-demonstration">
@@ -18,8 +17,10 @@
                 </div>
             </div>
         </div>
+        
         <div class="row-buttons">
             <button class="button"
+                    :class="{'_preloading': isDataLoading}"
                     @click="formatingData"
             >Форматировать и сохранить
             </button>
@@ -43,7 +44,6 @@
             </p>
         </template>
         
-        
     </div>
 </template>
 
@@ -58,7 +58,7 @@
 
         data() {
             return {
-                isLoadingInProcess: false,
+                isDataLoading: false,
             }
         },
 
@@ -90,7 +90,7 @@
             
             sentDataToFirebase(pairsData, ratesData) {
 
-                this.isLoadingInProcess = true;
+                this.isDataLoading = true;
                 
                 const urlPairs = createUrlService.currencyPairs();
                 const urlRates = createUrlService.currencyRates();
@@ -110,7 +110,7 @@
                         console.log('Ошибка загрузки данных для обмена валют', e);
                     })
                     .finally(() => {
-                        this.isLoadingInProcess = false;
+                        this.isDataLoading = false;
                     });
             }
         }

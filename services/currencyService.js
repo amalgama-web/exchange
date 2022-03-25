@@ -72,10 +72,5 @@ export default {
             pair: `${pair.base_currency}/${pair.quote_currency}`,
             rate: pair.rate
         }));
-    },
-
-    // todo удалить этот метод
-    toFixed(number) {
-        return +number.toFixed(2);
-    },
+    }
 }

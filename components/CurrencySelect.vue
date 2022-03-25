@@ -4,12 +4,12 @@
              class="currency-select__selected"
              :class="{'_open': isOpen}"
         >
-            {{ selectedCurrency ? selectedCurrency : '-' }}
+            {{ selected ? selected : '-' }}
         </div>
         <ul v-show="isOpen"
             class="currency-select__list"
         >
-            <li v-for="currency in currencyList"
+            <li v-for="currency in list"
                 @click="select(currency)"
                 class="currency-select__item"
             >
@@ -21,7 +21,13 @@
 
 <script>
     export default {
-        props: ['currencyList', 'selectedCurrency'],
+        name: 'CurrencySelect',
+
+        props: [
+            'list',
+            'selected'
+        ],
+        
         data() {
             return {
                 isOpen: false
@@ -34,7 +40,7 @@
             },
             select(currency) {
                 this.isOpen = false;
-                this.$emit('currency-select', currency);
+                this.$emit('select', currency);
             }
         }
     }

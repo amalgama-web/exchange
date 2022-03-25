@@ -22,23 +22,13 @@
 
 <script>
     export default {
-        components: {},
+        name: 'TheBreadcrumbs',
 
-        data() {
-            return {}
-        },
         computed: {
             routes() {
                 return this.$route.matched;
             }
         },
-
-        methods: {},
-
-        watch: {},
-
-        created() {
-        }
     }
 </script>
 
