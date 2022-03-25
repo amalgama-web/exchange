@@ -159,6 +159,9 @@ a {
     padding: 0;
     list-style-type: none;
     columns: 3;
+    &__commission {
+        color: orangered;
+    }
 }
 
 .row-buttons {
