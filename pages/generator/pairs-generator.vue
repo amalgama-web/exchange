@@ -17,7 +17,7 @@
                     .currency-badge {{pair.base_currency}}
                     .currency-badge {{pair.quote_currency}}
                     strong {{ +pair.rate.toFixed(6) }}
-                    span.currency-column-list__commission {{ pair.commission }}%
+                    span.currency-column-list__commission  {{ pair.commission }}%
 
 </template>
 
