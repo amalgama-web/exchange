@@ -1,9 +1,8 @@
-<template>
-    <div class="wrapper">
-        <the-header></the-header>
-        <TheBreadcrumbs></TheBreadcrumbs>
-        <Nuxt />
-    </div>
+<template lang="pug">
+    .wrapper
+        the-header
+        the-breadcrumbs
+        nuxt
 </template>
 
 <script>

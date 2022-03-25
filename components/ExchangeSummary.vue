@@ -1,32 +1,27 @@
-<template>
-    <div class="exchange-summary">
-        <div class="exchange-summary__row">
-            <div class="exchange-summary__cell">Вы платите</div>
-            <div class="exchange-summary__cell">{{ baseCurAmount | toFixed }} {{ baseCur }}</div>
-        </div>
-        <div class="exchange-summary__row">
-            <div class="exchange-summary__cell">Вы получаете</div>
-            <div class="exchange-summary__cell">{{ quoteCurAmountFinal | toFixed }} {{ quoteCur }}</div>
-        </div>
-        <div class="exchange-summary__row">
-            <div class="exchange-summary__cell">Комиссия</div>
-            <div class="exchange-summary__cell"> {{ commissionAmount | toFixed }} {{ quoteCur }}</div>
-        </div>
-        <div class="exchange-summary__row">
-            <div class="exchange-summary__cell">Комиссия %</div>
-            <div class="exchange-summary__cell">{{ commissionText }}</div>
-        </div>
-        <div class="exchange-summary__row">
-            <div class="exchange-summary__cell">Курс</div>
-            <div class="exchange-summary__cell">1 {{ baseCur }} = {{ rate | toFixed(8)  }} {{ quoteCur }}</div>
-        </div>
-    </div>
+<template lang="pug">
+    .exchange-summary
+        .exchange-summary__row
+            .exchange-summary__cell Вы платите
+            .exchange-summary__cell {{ baseCurAmount | toFixed }} {{ baseCur }}
+        .exchange-summary__row
+            .exchange-summary__cell Вы получаете
+            .exchange-summary__cell {{ quoteCurAmountFinal | toFixed }} {{ quoteCur }}
+        .exchange-summary__row
+            .exchange-summary__cell Комиссия
+            .exchange-summary__cell  {{ commissionAmount | toFixed }} {{ quoteCur }}
+        .exchange-summary__row
+            .exchange-summary__cell Комиссия %
+            .exchange-summary__cell {{ commissionText }}
+        .exchange-summary__row
+            .exchange-summary__cell Курс
+            .exchange-summary__cell 1 {{ baseCur }} = {{ rate | toFixed(8)  }} {{ quoteCur }}
 </template>
 
 <script>
     export default {
         name: 'ExchangeSummary',
 
+        // todo transfer array with paris title-description
         props: [
             'baseCur',
             'quoteCur',

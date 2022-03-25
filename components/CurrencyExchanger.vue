@@ -1,18 +1,7 @@
-<template>
-    <div class="currency-exchanger">
-        
-        <FloatInput class="currency-exchanger__input"
-                     :value="value"
-                     @change="$emit('change', $event)"
-                     :disabled="disabled"
-        ></FloatInput>
-        
-        <CurrencySelect :list="list"
-                         :selected="selected"
-                         @select="$emit('select', $event)"
-        ></CurrencySelect>
-        
-    </div>
+<template lang="pug">
+    .currency-exchanger
+        float-input.currency-exchanger__input(:value='value' @change="$emit('change', $event)" :disabled='disabled')
+        currency-select(:list='list' :selected='selected' @select="$emit('select', $event)")
 </template>
 
 <script>

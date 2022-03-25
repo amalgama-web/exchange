@@ -1,76 +1,25 @@
-<template>
-    <div class="l-container">
-        
-        <h3>Обмен</h3>
-        
-        <div class="exchange-row"
-             :class="{'_preloading': isInitialDataLoading}"
-        >
-            <div class="exchange-tile">
-                <div class="exchange-tile__head">
-                    Обмен
-                    <span v-if="baseCur && quoteCur">
-                        {{baseCur}} на {{quoteCur}}
-                    </span>
-                </div>
-                
-                <div class="exchange-tile__subhead">Вы платите</div>
-                
-                <CurrencyExchanger v-model="baseCurAmount"
-                                   :selected="baseCur"
-                                   :list="baseCurrencyList"
-                                   :disabled="!isCurrenciesSelected"
-                                   @change="calcQuoteDirection"
-                                   @select="selectBaseCur"
-                ></CurrencyExchanger>
-                
-                <div class="exchange-tile__subhead">Вы получаете</div>
-                
-                <CurrencyExchanger v-model="quoteCurAmountFinal"
-                                   :selected="quoteCur"
-                                   :list="quoteCurrencyList"
-                                   :disabled="!isCurrenciesSelected"
-                                   @change="calcBaseDirection"
-                                   @select="selectQuoteCur"
-                ></CurrencyExchanger>
-            
-            </div>
-            
-            <div class="exchange-tile">
-                <div class="exchange-tile__head">
-                    Итого
-                </div>
-                
-                <div v-if="!isCurrenciesSelected"
-                     class="exchange-summary-empty"
-                >
-                    Выберите валюты для обмена
-                </div>
-                
-                <ExchangeSummary v-else
-                                 :base-cur="baseCur"
-                                 :quote-cur="quoteCur"
-                                 :base-cur-amount="baseCurAmount"
-                                 :quote-cur-amount-final="quoteCurAmountFinal"
-                                 :commission-amount="commissionAmount"
-                                 :commission-text="commission + '%'"
-                                 :rate="rate"
-                                 :class="{'_preloading': isAdditionalRatesLoading}"
-                ></ExchangeSummary>
-            
-            </div>
-        </div>
-        
-        <div class="exchange-footer">
-            <button @click="exchange"
-                    :disabled="!exchangeEnable"
-                    class="button"
-            >Обменять
-            </button>
-        </div>
-    
-    
-    </div>
+<template lang="pug">
+    .l-container
+        h3 Обмен
+        .exchange-row(:class="{'_preloading': isInitialDataLoading}")
+            .exchange-tile
+                .exchange-tile__head
+                    | Обмен
+                    span(v-if='baseCur && quoteCur')
+                        | {{baseCur}} на {{quoteCur}}
+                .exchange-tile__subhead Вы платите
+                currency-exchanger(v-model='baseCurAmount' :selected='baseCur' :list='baseCurrencyList' :disabled='!isCurrenciesSelected' @change='calcQuoteDirection' @select='selectBaseCur')
+                .exchange-tile__subhead Вы получаете
+                currency-exchanger(v-model='quoteCurAmountFinal' :selected='quoteCur' :list='quoteCurrencyList' :disabled='!isCurrenciesSelected' @change='calcBaseDirection' @select='selectQuoteCur')
+            .exchange-tile
+                .exchange-tile__head
+                    | Итого
+                .exchange-summary-empty(v-if='!isCurrenciesSelected')
+                    | Выберите валюты для обмена
+                exchange-summary(v-else='' :base-cur='baseCur' :quote-cur='quoteCur' :base-cur-amount='baseCurAmount' :quote-cur-amount-final='quoteCurAmountFinal' :commission-amount='commissionAmount' :commission-text="commission + '%'" :rate='rate' :class="{'_preloading': isAdditionalRatesLoading}")
+        .exchange-footer
+            button.button(@click='exchange' :disabled='!exchangeEnable')
+                | Обменять
 </template>
 
 

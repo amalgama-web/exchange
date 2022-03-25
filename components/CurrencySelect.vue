@@ -1,22 +1,10 @@
-<template>
-    <div class="currency-select">
-        <div @click="toggle"
-             class="currency-select__selected"
-             :class="{'_open': isOpen}"
-        >
-            {{ selected ? selected : '-' }}
-        </div>
-        <ul v-show="isOpen"
-            class="currency-select__list"
-        >
-            <li v-for="currency in list"
-                @click="select(currency)"
-                class="currency-select__item"
-            >
-                {{currency}}
-            </li>
-        </ul>
-    </div>
+<template lang="pug">
+    .currency-select
+        .currency-select__selected(@click='toggle' :class="{'_open': isOpen}")
+            | {{ selected ? selected : '-' }}
+        ul.currency-select__list(v-show='isOpen')
+            li.currency-select__item(v-for='currency in list' @click='select(currency)')
+                | {{currency}}
 </template>
 
 <script>

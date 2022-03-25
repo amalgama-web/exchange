@@ -1,7 +1,6 @@
-<template>
-    <div class="l-container">
-        <nuxt-child></nuxt-child>
-    </div>
+<template lang="pug">
+    .l-container
+        nuxt-child
 </template>
 
 <script>

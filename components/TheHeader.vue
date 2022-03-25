@@ -1,9 +1,7 @@
-<template>
-    <header class="header">
-        <div class="l-container">
-            Exchange service
-        </div>
-    </header>
+<template lang="pug">
+    header.header
+        .l-container
+            | Exchange service
 </template>
 
 <script>

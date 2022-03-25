@@ -1,29 +1,15 @@
-<template>
-    <div>
-        <h2>Генерируем список рандомных валют для обмена</h2>
-        
-        <div class="row-buttons">
-            <button class="button"
-                    @click="generateList"
-            >Сгенерировать коды валют
-            </button>
-            
-            <nuxt-link v-if="currencyList.length"
-                       class="button _green"
-                       to="/generator/pairs-generator"
-            >Далее к генерации пар
-            </nuxt-link>
-        </div>
-        
-        <ul v-if="currencyList.length"
-            class="currency-list"
-        >
-            <li class="currency-badge"
-                v-for="currency in currencyList"
-            >{{ currency }}
-            </li>
-        </ul>
-    </div>
+<template lang="pug">
+    div
+        h2 Генерируем список рандомных валют для обмена
+        .row-buttons
+            button.button(@click='generateList')
+                | Сгенерировать коды валют
+            nuxt-link.button._green(v-if='currencyList.length' to='/generator/pairs-generator')
+                | Далее к генерации пар
+        ul.currency-list(v-if='currencyList.length')
+            li.currency-badge(v-for='currency in currencyList')
+                | {{ currency }}
+
 </template>
 
 <script>

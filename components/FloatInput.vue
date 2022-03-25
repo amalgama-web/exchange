@@ -1,10 +1,5 @@
-<template>
-    <input type="text"
-           @input="onInput"
-           :value="value"
-           @change="$emit('change', +$event.target.value)"
-           :disabled="disabled"
-    >
+<template lang="pug">
+    input(type='text' @input='onInput' :value='value' @change="$emit('change', +$event.target.value)" :disabled='disabled')
 </template>
 
 <script>

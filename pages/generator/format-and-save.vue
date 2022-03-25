@@ -1,50 +1,42 @@
-<template>
-    <div>
-        <h2>Форматируем данные и сохраняем их для API двумя списками в формате</h2>
-        
-        <div class="format-demonstration">
-            <div class="format-demonstration__col">
-                <h4>Список пар и комиссий</h4>
-                <div class="code-example">
-                    {<br>&nbsp;&nbsp;"base_currency": "USD",<br>&nbsp;&nbsp;"quote_currency": "EUR",<br>
-                    &nbsp;&nbsp;"commission": 3<br>}
-                </div>
-            </div>
-            <div class="format-demonstration__col">
-                <h4>Список пара-курс</h4>
-                <div class="code-example">
-                    {<br>&nbsp;&nbsp;"pair": "USD/EUR",<br>&nbsp;&nbsp;"rate": 1.5<br>}
-                </div>
-            </div>
-        </div>
-        
-        <div class="row-buttons">
-            <button class="button"
-                    :class="{'_preloading': isDataLoading}"
-                    @click="formatingData"
-            >Форматировать и сохранить
-            </button>
-            
-            <nuxt-link v-if="isEndpointsCreated"
-                       class="button _green"
-                       to="/exchange/"
-            >Перейти к обмену
-            </nuxt-link>
-        </div>
-    
-        <template v-if="isEndpointsCreated">
-            <h2>Сформированы два endpoint'а для получения данных при обмене</h2>
-            <h4>Список пар и комиссий</h4>
-            <p>
-                <a :href="apiPairsEndpoint" target="_blank">{{apiPairsEndpoint}}</a>
-            </p>
-            <h4>Список пара-курс</h4>
-            <p>
-                <a :href="apiRatesEndpoint" target="_blank">{{apiRatesEndpoint}}</a>
-            </p>
-        </template>
-        
-    </div>
+<template lang="pug">
+    div
+        h2 Форматируем данные и сохраняем их для API двумя списками в формате
+        .format-demonstration
+            .format-demonstration__col
+                h4 Список пар и комиссий
+                .code-example
+                    | {
+                    br
+                    |   "base_currency": "USD",
+                    br
+                    |   "quote_currency": "EUR",
+                    br
+                    |                       "commission": 3
+                    br
+                    | }
+            .format-demonstration__col
+                h4 Список пара-курс
+                .code-example
+                    | {
+                    br
+                    |   "pair": "USD/EUR",
+                    br
+                    |   "rate": 1.5
+                    br
+                    | }
+        .row-buttons
+            button.button(:class="{'_preloading': isDataLoading}" @click='formatingData')
+                | Форматировать и сохранить
+            nuxt-link.button._green(v-if='isEndpointsCreated' to='/exchange/')
+                | Перейти к обмену
+        template(v-if='isEndpointsCreated')
+            h2 Сформированы два endpoint'а для получения данных при обмене
+            h4 Список пар и комиссий
+            p
+                a(:href='apiPairsEndpoint' target='_blank') {{apiPairsEndpoint}}
+            h4 Список пара-курс
+            p
+                a(:href='apiRatesEndpoint' target='_blank') {{apiRatesEndpoint}}
 </template>
 
 <script>

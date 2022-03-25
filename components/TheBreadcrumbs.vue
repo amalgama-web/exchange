@@ -1,23 +1,12 @@
-<template>
-    <div class="l-container">
-        <ul v-if="$route.path !== '/'"
-            class="breadcrumbs"
-        >
-            <li class="breadcrumbs__item">
-                <nuxt-link to="/">
-                    Главная
-                </nuxt-link>
-            </li>
-            <li v-for="route in routes"
-                :key="route.name"
-                class="breadcrumbs__item"
-            >
-                <nuxt-link :to="route.path">
-                    {{route.meta.ruName}}
-                </nuxt-link>
-            </li>
-        </ul>
-    </div>
+<template lang="pug">
+    .l-container
+        ul.breadcrumbs(v-if="$route.path !== '/'")
+            li.breadcrumbs__item
+                nuxt-link(to='/')
+                    | Главная
+            li.breadcrumbs__item(v-for='route in routes' :key='route.name')
+                nuxt-link(:to='route.path')
+                    | {{route.meta.ruName}}
 </template>
 
 <script>

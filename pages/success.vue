@@ -1,14 +1,10 @@
-<template>
-    <div class="l-container">
-        <h3>Вы успешно совершили обмен</h3>
-        <p>
-            Вы обменяли {{baseAmount | toFixed }} {{baseCur}} на {{quoteAmount | toFixed }} {{quoteCur}}
-        </p>
-        <nuxt-link class="button _green"
-                   to="/exchange/"
-        >Перейти к обмену
-        </nuxt-link>
-    </div>
+<template lang="pug">
+    .l-container
+        h3 Вы успешно совершили обмен
+        p
+            | Вы обменяли {{baseAmount | toFixed }} {{baseCur}} на {{quoteAmount | toFixed }} {{quoteCur}}
+        nuxt-link.button._green(to='/exchange/')
+            | Перейти к обмену
 </template>
 
 <script>
