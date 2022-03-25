@@ -4,7 +4,7 @@
         <h3>Обмен</h3>
         
         <div class="exchange-row"
-             :class="{'_preloading': isDataLoading}"
+             :class="{'_preloading': isInitialDataLoading}"
         >
             <div class="exchange-tile">
                 <div class="exchange-tile__head">
@@ -82,7 +82,7 @@
 
         data() {
             return {
-                isDataLoading: true,
+                isInitialDataLoading: true,
                 isAdditionalRatesLoading: false,
 
                 baseCurrencyObj: null,
@@ -124,7 +124,6 @@
             },
 
             rate() {
-                console.log('rate computed fire');
                 return this.baseCurrencyObj && this.isCurrenciesSelected
                     ? this.baseCurrencyObj[this.baseCur][this.quoteCur]['rate']
                     : 1;
@@ -245,7 +244,7 @@
                     console.log('Ошибка при загрузке данных для обмена', e);
                 })
                 .finally(() => {
-                    this.isDataLoading = false;
+                    this.isInitialDataLoading = false;
                 });
             
         },
@@ -286,7 +285,6 @@
         &__subhead {
             font-size: 20px;
             margin-bottom: 10px;
-            
         }
     }
     

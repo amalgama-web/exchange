@@ -45,6 +45,7 @@ export default {
 
     actions: {
 
+        // todo transfer all actions with LS into store plugin
         setCurrencyList(context, payload) {
             context.commit('setCurrencyList', payload);
             localStorage.setItem('currencyList', JSON.stringify(payload));
