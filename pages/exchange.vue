@@ -1,10 +1,10 @@
 <template lang="pug">
     .l-container
-        h3 Обмен
         .exchange-row(:class="{'_preloading': isInitialDataLoading}")
             .exchange-tile
                 .exchange-tile__head
                     | Обмен
+                    =' '
                     span(v-if='baseCur && quoteCur')
                         | {{baseCur}} на {{quoteCur}}
                 .exchange-tile__subhead Вы платите
@@ -73,14 +73,6 @@
         },
 
         computed: {
-
-            apiPairsEndpoint() {
-                return this.$store.state.apiPairsEndpoint;
-            },
-
-            apiRatesEndpoint() {
-                return this.$store.state.apiRatesEndpoint;
-            },
 
             baseCurrencyList() {
                 return this.baseCurrencyObj ? Object.keys(this.baseCurrencyObj) : [];
@@ -189,9 +181,9 @@
 
                     this.isAdditionalRatesLoading = true;
 
-                    this.$axios.$get(this.apiRatesEndpoint)
-                        .then((updatedRates) => {
-                            this.applyNewRates(updatedRates);
+                    this.$axios.get('http://localhost:3000/api/get-rates/')
+                        .then(response => {
+                            this.applyNewRates(response.data);
                             this.calcQuoteDirection();
                         })
                         .catch(e => {
@@ -201,16 +193,16 @@
                             this.isAdditionalRatesLoading = false;
                         });
 
-                }, 30000);
+                }, 30 * 1000);
             };
 
-            const promisePairs = this.$axios.$get(this.apiPairsEndpoint);
-            const promiseRates = this.$axios.$get(this.apiRatesEndpoint);
+            const promisePairs = this.$axios.get(this.$axios.defaults.baseURL + 'api/get-pairs/');
+            const promiseRates = this.$axios.get(this.$axios.defaults.baseURL + 'api/get-rates/');
 
-            Promise.all([promisePairs, promiseRates])
-                .then(([pairsList, ratesList]) => {
-                    this.createBaseListFromPairs(pairsList);
-                    this.applyNewRates(ratesList);
+            Promise.all( [ promisePairs, promiseRates ] )
+                .then( ( [ pairsResponse, ratesResponse ] ) => {
+                    this.createBaseListFromPairs(pairsResponse.data);
+                    this.applyNewRates(ratesResponse.data);
                     startUpdateCounter();
                 })
                 .catch(e => {

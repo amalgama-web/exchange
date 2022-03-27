@@ -6,17 +6,10 @@
 </template>
 
 <script>
-    import TheHeader from "~/components/TheHeader";
-    
+
     export default {
-        components: {
-            TheHeader
-        },
-        
-        created() {
-            if(process.client) {
-                this.$store.dispatch('initStoreFromLS');
-            }
+        mounted() {
+            this.$store.dispatch('initStoreFromLS');
         }
     }
 </script>

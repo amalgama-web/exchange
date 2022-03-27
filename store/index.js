@@ -10,18 +10,16 @@ export default {
             currencyList: [],
             currencyPairs: [],
 
-            apiPairsEndpoint: null,
-            apiRatesEndpoint: null
+            isDataStoredInAPI: false
         }
     },
 
     getters: {
-        isGeneratedDataReady(state) {
+        isDataGenerated(state) {
             return !!(state.currencyList.length && state.currencyPairs.length);
         },
-
-        isEndpointsCreated(state) {
-            return !!(state.apiPairsEndpoint && state.apiRatesEndpoint);
+        isDataStoredInAPI(state) {
+            return state.isDataStoredInAPI;
         }
     },
 
@@ -34,29 +32,21 @@ export default {
             state.currencyPairs = payload;
         },
 
-        setPairsEndpoint(state, payload) {
-            state.apiPairsEndpoint = payload;
-        },
-
-        setRatesEndpoint(state, payload) {
-            state.apiRatesEndpoint = payload;
+        setApiStoredState(state, payload) {
+            state.isDataStoredInAPI = payload;
         }
     },
 
     actions: {
 
-        // todo transfer all actions with LS into store plugin
+        // todo transfer all manipulations with LS into store plugin
         setCurrencyList(context, payload) {
             context.commit('setCurrencyList', payload);
             localStorage.setItem('currencyList', JSON.stringify(payload));
 
-            // remove old generated pairs and endpoints
+            // remove old generated pairs
             context.commit('setCurrencyPairsList', []);
-            context.commit('setPairsEndpoint', null);
-            context.commit('setRatesEndpoint', null);
             localStorage.removeItem('currencyPairs');
-            localStorage.removeItem('apiPairsEndpoint');
-            localStorage.removeItem('apiRatesEndpoint');
         },
 
         setCurrencyPairsList(context, payload) {
@@ -64,34 +54,23 @@ export default {
             localStorage.setItem('currencyPairs', JSON.stringify(payload));
         },
 
+        setApiStoredState(context, payload) {
+            context.commit('setApiStoredState', payload);
+            localStorage.setItem('isDataStored', JSON.stringify(payload));
+        },
+
         initStoreFromLS(context) {
             const currencyListData = localStorage.getItem('currencyList');
             const pairsListData = localStorage.getItem('currencyPairs');
+            const isDataStored = localStorage.getItem('isDataStored');
 
-            const apiPairsEndpoint = localStorage.getItem('apiPairsEndpoint');
-            const apiRatesEndpoint = localStorage.getItem('apiRatesEndpoint');
-
-            if(apiPairsEndpoint && apiRatesEndpoint) {
-                context.commit('setPairsEndpoint', JSON.parse(apiPairsEndpoint));
-                context.commit('setRatesEndpoint', JSON.parse(apiRatesEndpoint));
-            }
+            context.commit('setApiStoredState', JSON.parse(isDataStored) );
 
             if(!currencyListData) return;
             context.commit('setCurrencyList', JSON.parse(currencyListData) );
 
             if(!pairsListData) return;
             context.commit('setCurrencyPairsList', JSON.parse(pairsListData) );
-        },
-
-        setPairsEndpoint(context, payload) {
-            context.commit('setPairsEndpoint', payload);
-            localStorage.setItem('apiPairsEndpoint', JSON.stringify(payload));
-        },
-
-        setRatesEndpoint(context, payload) {
-            context.commit('setRatesEndpoint', payload);
-            localStorage.setItem('apiRatesEndpoint', JSON.stringify(payload));
-        },
-
+        }
     },
 }

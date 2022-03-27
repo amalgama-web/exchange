@@ -8,10 +8,6 @@ export default {
         }
     },
 
-    getters: {
-
-    },
-
     mutations: {
         confirmTransaction(state, payload) {
             state.baseCurAmount = payload.baseCurAmount;

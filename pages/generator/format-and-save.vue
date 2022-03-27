@@ -1,47 +1,53 @@
 <template lang="pug">
+    // mixin for text indent in code examples
+    - var indent = 4
+    mixin indentstr(level, text)
+        - for (var i = 0; i < level * indent; i++)
+            =' '
+        =text
+        br
+
     div
         h2 Форматируем данные и сохраняем их для API двумя списками в формате
         .format-demonstration
             .format-demonstration__col
                 h4 Список пар и комиссий
                 pre.code-example
-                    |{
-                    br
-                    |    "base_currency": "USD",
-                    br
-                    |    "quote_currency": "EUR",
-                    br
-                    |    "commission": 3
-                    br
-                    |}
+                    +indentstr(0, '[')
+                    +indentstr(1, '{')
+                    +indentstr(2, '"base_currency": "USD",')
+                    +indentstr(2, '"quote_currency": "EUR",')
+                    +indentstr(2, '"commission": 3')
+                    +indentstr(1, '},')
+                    +indentstr(1, '...')
+                    +indentstr(0, ']')
             .format-demonstration__col
                 h4 Список пара-курс
                 pre.code-example
-                    |{
-                    br
-                    |    "pair": "USD/EUR",
-                    br
-                    |    "rate": 1.5
-                    br
-                    |}
+                    +indentstr(0, '[')
+                    +indentstr(1, '{')
+                    +indentstr(2, '"pair": "USD/EUR",')
+                    +indentstr(2, '"rate": 1.5')
+                    +indentstr(1, '},')
+                    +indentstr(1, '...')
+                    +indentstr(0, ']')
         .row-buttons
-            button.button(:class="{'_preloading': isDataLoading}" @click='formatingData')
+            button.button(:class="{'_preloading': isLoadingInProcess}" @click='formatingData')
                 | Форматировать и сохранить
-            nuxt-link.button._green(v-if='isEndpointsCreated' to='/exchange/')
+            nuxt-link.button._green(v-if='isDataStoredInAPI' to='/exchange/')
                 | Перейти к обмену
-        template(v-if='isEndpointsCreated')
-            h2 Сформированы два endpoint'а для получения данных при обмене
-            h4 Список пар и комиссий
-            p
-                a(:href='apiPairsEndpoint' target='_blank') {{apiPairsEndpoint}}
-            h4 Список пара-курс
-            p
-                a(:href='apiRatesEndpoint' target='_blank') {{apiRatesEndpoint}}
+        template(v-if='isDataStoredInAPI')
+            h2 Данные сохранены
+            p Список пар с комиссией сгенерирован в файл
+                =' '
+                strong api/pairs.json
+            p Список пара-курс сгенерирован в файл&nbsp;
+                =' '
+                strong api/rates.json
 </template>
 
 <script>
     import currencyService from "~/services/currencyService";
-    import createUrlService from "~/services/createUrlService";
 
     export default {
         meta: {
@@ -50,7 +56,7 @@
 
         data() {
             return {
-                isDataLoading: false,
+                isLoadingInProcess: false,
             }
         },
 
@@ -58,18 +64,9 @@
             currencyPairs() {
                 return this.$store.state.currencyPairs;
             },
-            
-            isEndpointsCreated() {
-                return this.apiPairsEndpoint && this.apiPairsEndpoint;
-            },
-
-            apiPairsEndpoint() {
-                return this.$store.state.apiPairsEndpoint;
-            },
-
-            apiRatesEndpoint() {
-                return this.$store.state.apiRatesEndpoint;
-            },
+            isDataStoredInAPI() {
+                return this.$store.state.isDataStoredInAPI;
+            }
         },
 
         methods: {
@@ -77,33 +74,26 @@
                 const formattedPairs = currencyService.getFormattedPairs(this.currencyPairs);
                 const formattedRates = currencyService.getFormattedRates(this.currencyPairs);
 
-                this.sentDataToFirebase(formattedPairs, formattedRates);
+                this.sentDataToMockAPI(formattedPairs, formattedRates);
             },
             
-            sentDataToFirebase(pairsData, ratesData) {
-
-                this.isDataLoading = true;
+            sentDataToMockAPI(pairsData, ratesData) {
+                this.isLoadingInProcess = true;
                 
-                const urlPairs = createUrlService.currencyPairs();
-                const urlRates = createUrlService.currencyRates();
-                
-                const promisePairs = this.$axios.$post(urlPairs, pairsData);
-                const promiseRates = this.$axios.$post(urlRates, ratesData);
+                const promisePairs = this.$axios.post(this.$axios.defaults.baseURL + 'api/set-pairs/', pairsData);
+                const promiseRates = this.$axios.post(this.$axios.defaults.baseURL + 'api/set-rates/', ratesData);
 
                 Promise.all([promisePairs, promiseRates])
-                    .then( ([responsePairs, responseRates]) => {
-                        const pairsEndpoint = createUrlService.currencyPairs(responsePairs.name);
-                        const ratesEndpoint = createUrlService.currencyRates(responseRates.name);
-
-                        this.$store.dispatch('setPairsEndpoint', pairsEndpoint);
-                        this.$store.dispatch('setRatesEndpoint', ratesEndpoint);
+                    .then(() => {
+                        this.$store.dispatch('setApiStoredState', true);
                     })
                     .catch(e => {
-                        console.log('Ошибка загрузки данных для обмена валют', e);
+                        console.log('Ошибка загрузки данных в API', e);
                     })
                     .finally(() => {
-                        this.isDataLoading = false;
+                        this.isLoadingInProcess = false;
                     });
+
             }
         }
 

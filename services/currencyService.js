@@ -1,4 +1,8 @@
-import randomService from "~/services/randomService";
+function getRandomInt(min, max) {
+    min = Math.ceil(min);
+    max = Math.floor(max);
+    return Math.floor(Math.random() * (max - min + 1)) + min; //Максимум и минимум включаются
+}
 
 export default {
     currencyList: [
@@ -15,7 +19,7 @@ export default {
     ],
 
     getRandomCurrency() {
-        return this.currencyList[randomService.getRandomInt(0, this.currencyList.length - 1)]
+        return this.currencyList[getRandomInt(0, this.currencyList.length - 1)]
     },
 
     getRandomCurrencies(number) {
@@ -36,12 +40,12 @@ export default {
         for(let baseIndex = 0; baseIndex < listLength - 1; baseIndex++) {
             for(let quoteIndex = baseIndex + 1; quoteIndex < listLength; quoteIndex++) {
 
-                const rate = randomService.getRandomInt(10, 100);
+                const rate = getRandomInt(10, 100);
                 // прямая пара
                 currencyPairs.push({
                     base_currency: currencyList[baseIndex],
                     quote_currency: currencyList[quoteIndex],
-                    commission: randomService.getRandomInt(1, 5),
+                    commission: getRandomInt(1, 5),
                     rate: rate
                 });
 
@@ -49,7 +53,7 @@ export default {
                 currencyPairs.push({
                     base_currency: currencyList[quoteIndex],
                     quote_currency: currencyList[baseIndex],
-                    commission: randomService.getRandomInt(1, 5),
+                    commission: getRandomInt(1, 5),
                     rate: 1 / rate
                 });
             }

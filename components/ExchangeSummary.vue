@@ -21,7 +21,7 @@
     export default {
         name: 'ExchangeSummary',
 
-        // todo transfer array with paris title-description
+        // todo transfer array with pairs title-description
         props: [
             'baseCur',
             'quoteCur',
