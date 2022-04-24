@@ -9,10 +9,10 @@
             .button-wrap
                 .input-hidden-wrap
                     input.input-hidden(ref="input")
-                button.button(@click="onClick") C
+                button.button(@click="onClick") Copy
             p Проверить результат:
             p
-                textarea.test-textarea(ref="textarea")
+                input.test-input(ref="input")
 </template>
 
 <script>
@@ -63,7 +63,7 @@ export default {
             try {
                 let isCopied = document.execCommand('copy');
 
-                if (isCopied) this.messages.push();
+                if (isCopied) this.messages.push({text: 'execCommand success', status: 'ok'});
 
                 this.onSuccess();
             } catch (err) {
@@ -74,7 +74,7 @@ export default {
         onSuccess() {
             this.oldRand = this.newRand;
             this.newRand = Math.random();
-            this.$refs.textarea.value = '';
+            this.$refs.input.value = '';
         }
     },
 
@@ -96,7 +96,7 @@ p {
 }
 
 .button {
-    width: 40px;
+    width: 80px;
     height: 40px;
 }
 
@@ -121,20 +121,20 @@ p {
     //    visibility: hidden;
 }
 
-textarea {
+.test-input {
     display: block;
     width: 100%;
-    height: 300px;
+    height: 40px;
 }
 
 .test-data {
     position: fixed;
-    left: 0;
+    right: 0;
     top: 0;
     width: 200px;
     padding: 10px;
 
-    font-size: 14px;
+    font-size: 12px;
     background-color: fade-out(#272727, 0.2);
     color: #fff;
 
