@@ -6,16 +6,16 @@
             h2 Добрый день!
             p Скопированное значение {{oldRand}}
             p Новое значение для копирования {{newRand}}
-            .button-wrap
-                .input-hidden-wrap
-                    input.input-hidden(ref="input")
-                button.button(@click="onClick") Copy
+            button.button.copy-button(@click="onClick" ref="button") Copy
             p Проверить результат:
             p
-                input.test-input(ref="input")
+                input.test-input(ref="testInput")
 </template>
 
 <script>
+
+import ClipboardJS from 'clipboard';
+
 export default {
     meta: {
         ruName: 'Главная'
@@ -27,6 +27,8 @@ export default {
 
             oldRand: null,
             newRand: Math.random(),
+
+            clipboardInstance: null
 
         }
     },
@@ -42,44 +44,47 @@ export default {
                         this.messages.push({text: 'navigator.clipboard success', status: 'ok'});
                         this.onSuccess();
                     }).catch(err => {
-                    this.messages.push({text: 'navigator.clipboard dont have permission', status: 'err'});
+                    this.messages.push({text: 'navigator.clipboard fail', status: 'err'});
                     this.fallbackMode();
                 });
-                return;
             }
-
-            this.fallbackMode();
         },
 
         fallbackMode() {
             this.messages.push('fallback mode');
 
-            let input = this.$refs.input;
+            console.log(this.$refs.button);
 
-            input.value = this.newRand;
+        },
 
-            input.select();
+        initClipboardInstance() {
+            this.messages.push('ClipboardJS mode');
 
-            try {
-                let isCopied = document.execCommand('copy');
+            this.clipboardInstance = new ClipboardJS('.copy-button', {
+                text: () => String(this.newRand)
+            });
 
-                if (isCopied) this.messages.push({text: 'execCommand success', status: 'ok'});
-
+            this.clipboardInstance.on('success', () => {
                 this.onSuccess();
-            } catch (err) {
-                this.messages.push({text: 'execCommand error', status: 'err'})
-            }
+                this.messages.push({text: 'ClipboardJS copy success', status: 'ok'});
+            });
         },
 
         onSuccess() {
             this.oldRand = this.newRand;
             this.newRand = Math.random();
-            this.$refs.input.value = '';
+            this.$refs.testInput.value = '';
         }
     },
 
     mounted() {
         this.messages.push('Welcome!');
+        if (!navigator.clipboard) this.initClipboardInstance();
+    },
+
+    beforeDestroy() {
+        console.log('destroy');
+        if (this.clipboardInstance) this.clipboardInstance.destroy();
     }
 }
 </script>
@@ -87,12 +92,6 @@ export default {
 <style lang="scss" scoped>
 p {
     margin-bottom: 20px;
-}
-
-.button-wrap {
-    position: relative;
-    width: 40px;
-    height: 40px;
 }
 
 .button {
@@ -125,6 +124,7 @@ p {
     display: block;
     width: 100%;
     height: 40px;
+    padding: 0 10px;
 }
 
 .test-data {
@@ -134,7 +134,7 @@ p {
     width: 200px;
     padding: 10px;
 
-    font-size: 12px;
+    font-size: 14px;
     background-color: fade-out(#272727, 0.2);
     color: #fff;
 
