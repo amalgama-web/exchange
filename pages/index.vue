@@ -38,15 +38,14 @@ export default {
     methods: {
         onClick() {
             if (navigator.clipboard) {
-                this.messages.push('navigator.clipboard mode');
                 navigator.clipboard.writeText(this.newRand)
                     .then(() => {
                         this.messages.push({text: 'navigator.clipboard success', status: 'ok'});
                         this.onSuccess();
                     }).catch(err => {
-                    this.messages.push({text: 'navigator.clipboard fail', status: 'err'});
-                    this.fallbackMode();
-                });
+                        this.messages.push({text: 'navigator.clipboard fail', status: 'err'});
+                        this.fallbackMode();
+                    });
             }
         },
 
@@ -58,9 +57,7 @@ export default {
         },
 
         initClipboardInstance() {
-            this.messages.push('ClipboardJS mode');
-
-            this.clipboardInstance = new ClipboardJS('.copy-button', {
+            this.clipboardInstance = new ClipboardJS(this.$refs.button, {
                 text: () => String(this.newRand)
             });
 
