@@ -44,16 +44,8 @@ export default {
                         this.onSuccess();
                     }).catch(err => {
                         this.messages.push({text: 'navigator.clipboard fail', status: 'err'});
-                        this.fallbackMode();
                     });
             }
-        },
-
-        fallbackMode() {
-            this.messages.push('fallback mode');
-
-            console.log(this.$refs.button);
-
         },
 
         initClipboardInstance() {
