@@ -1,70 +1,153 @@
 <template lang="pug">
-    .l-container
-        h2 Добрый день!
-        .info-section(v-if='!isGeneratedDataReady && !isEndpointsCreated')
+    div
+        .test-data
+            p(v-for="message in messages" :class="message.status") {{message.text || message}}
+        .l-container
+            h2 Добрый день!
+            p Скопированное значение {{oldRand}}
+            p Новое значение для копирования {{newRand}}
+            .button-wrap
+                .input-hidden-wrap
+                    input.input-hidden(ref="input")
+                button.button(@click="onClick") C
+            p Проверить результат:
             p
-                | Для начала работы необходимо сгенерировать списки валют и endpoints для их получения
-            nuxt-link.button(to='/generator')
-                | Перейти к генерации
-        .info-section(v-else-if='isGeneratedDataReady && !isEndpointsCreated')
-            p
-                | Списки валют сгенерированы, но еще не отправлены в API
-            nuxt-link.button(to='/generator/format-and-save')
-                | Перейти к отправке
-        template(v-else='')
-            .info-section
-                p
-                    | Endpoints созданы, но вы можете их обновить c другими валютами
-                nuxt-link.button(to='/generator/')
-                    | Перейти к обновлению
-            .info-section
-                p
-                    | Endpoints для получения данных обмена созданы, можно перейти к обмену
-                p
-                    | Получение списка валютных пар и комиссий
-                    br
-                    a(target='_blank' :href='apiPairsEndpoint') {{apiPairsEndpoint}}
-                p
-                    | Получение списка пара-курс
-                    br
-                    a(target='_blank' :href='apiRatesEndpoint') {{apiRatesEndpoint}}
-                nuxt-link.button._green(to='/exchange/')
-                    | Перейти к обмену
-
+                textarea.test-textarea(ref="textarea")
 </template>
 
 <script>
+export default {
+    meta: {
+        ruName: 'Главная'
+    },
 
-    export default {
-        meta: {
-            ruName: 'Главная'
+    data() {
+        return {
+            messages: [],
+
+            oldRand: null,
+            newRand: Math.random(),
+
+        }
+    },
+
+    computed: {},
+
+    methods: {
+        onClick() {
+            if (navigator.clipboard) {
+                this.messages.push('navigator.clipboard mode');
+                navigator.clipboard.writeText(this.newRand)
+                    .then(() => {
+                        this.messages.push({text: 'navigator.clipboard success', status: 'ok'});
+                        this.onSuccess();
+                    }).catch(err => {
+                    this.messages.push({text: 'navigator.clipboard dont have permission', status: 'err'});
+                    this.fallbackMode();
+                });
+                return;
+            }
+
+            this.fallbackMode();
         },
 
-        computed: {
-            isGeneratedDataReady() {
-                return this.$store.getters.isGeneratedDataReady;
-            },
-            
-            isEndpointsCreated() {
-                return this.$store.getters.isEndpointsCreated;
-            },
-            
-            apiPairsEndpoint() {
-                return this.$store.state.apiPairsEndpoint;
-            },
+        fallbackMode() {
+            this.messages.push('fallback mode');
 
-            apiRatesEndpoint() {
-                return this.$store.state.apiRatesEndpoint;
-            },
+            let input = this.$refs.input;
+
+            input.value = this.newRand;
+
+            input.select();
+
+            try {
+                let isCopied = document.execCommand('copy');
+
+                if (isCopied) this.messages.push();
+
+                this.onSuccess();
+            } catch (err) {
+                this.messages.push({text: 'execCommand error', status: 'err'})
+            }
+        },
+
+        onSuccess() {
+            this.oldRand = this.newRand;
+            this.newRand = Math.random();
+            this.$refs.textarea.value = '';
         }
+    },
 
-
+    mounted() {
+        this.messages.push('Welcome!');
     }
+}
 </script>
 
-<style lang="scss">
-    .info-section {
-        margin-bottom: 40px;
+<style lang="scss" scoped>
+p {
+    margin-bottom: 20px;
+}
+
+.button-wrap {
+    position: relative;
+    width: 40px;
+    height: 40px;
+}
+
+.button {
+    width: 40px;
+    height: 40px;
+}
+
+.input-hidden-wrap {
+    position: absolute;
+    overflow-x: hidden;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 0px;
+}
+
+.input-hidden {
+    height: 40px;
+    width: 50px;
+    position: absolute;
+    top: 5px;
+    left: 0;
+
+    opacity: 0;
+    //    display: none;
+    //    visibility: hidden;
+}
+
+textarea {
+    display: block;
+    width: 100%;
+    height: 300px;
+}
+
+.test-data {
+    position: fixed;
+    left: 0;
+    top: 0;
+    width: 200px;
+    padding: 10px;
+
+    font-size: 14px;
+    background-color: fade-out(#272727, 0.2);
+    color: #fff;
+
+    p {
+        margin: 0;
+
+        &.ok {
+            color: greenyellow;
+        }
+
+        &.err {
+            color: orangered;
+        }
     }
-    
+}
 </style>

@@ -3,16 +3,19 @@
         .test-data
             p(v-for="message in messages" :class="message.status") {{message.text || message}}
         .l-container
-            h2 Добрый день! {{rand}}
+            h2 Добрый день!
+            p Скопированное значение {{oldRand}}
+            p Новое значение для копирования {{newRand}}
+            .button-wrap
+                .input-hidden-wrap
+                    input.input-hidden(ref="input")
+                button.button(@click="onClick") C
+            p Проверить результат:
             p
-                button.button(@click="onClick") Копировать адрес
-            p
-                textarea.test-textarea
-
+                textarea.test-textarea(ref="textarea")
 </template>
 
 <script>
-
 export default {
     meta: {
         ruName: 'Главная'
@@ -22,9 +25,9 @@ export default {
         return {
             messages: [],
 
-            rand: Math.random(),
+            oldRand: null,
+            newRand: Math.random(),
 
-            messaginh: 'console'
         }
     },
 
@@ -32,75 +35,51 @@ export default {
 
     methods: {
         onClick() {
-            // this.messages.push('click');
+            if (navigator.clipboard) {
+                this.messages.push('navigator.clipboard mode');
+                navigator.clipboard.writeText(this.newRand)
+                    .then(() => {
+                        this.messages.push({text: 'navigator.clipboard success', status: 'ok'});
+                        this.onSuccess();
+                    }).catch(err => {
+                        this.messages.push({text: 'navigator.clipboard dont have permission', status: 'err'});
+                        this.fallbackMode();
+                    });
+                return;
+            }
 
-            // if (navigator.clipboard) {
-            //     this.messages.push('navigator.clipboard way');
-            //     navigator.clipboard.writeText(this.rand)
-            //         .then(() => {
-            //             this.messages.push({text: 'navigator.clipboard success', status: 'ok'});
-            //         }).catch(err => {
-            //             this.messages.push({text: 'navigator.clipboard dont have permission', status: 'err'});
-            //         });
-            //
-            //     return;
-            // }
+            this.fallbackMode();
+        },
 
-            // this.messages.push('fallback mode');
+        fallbackMode() {
+            this.messages.push('fallback mode');
 
-            let textArea = document.createElement('textarea');
-            textArea.setAttribute('style', 'height: 1px; width:1px; border:0; opacity: 0; position: fixed;bottom: 0;right: 0;');
-            document.body.appendChild(textArea);
-            textArea.value = this.rand;
-            textArea.select();
+            let input = this.$refs.input;
+
+            input.value = this.newRand;
+
+            input.select();
 
             try {
                 let isCopied = document.execCommand('copy');
-                // this.messages.push(isCopied);
 
-                // if (isCopied) this.messages.push({text: 'execCommand success', status: 'ok'});
+                if (isCopied) this.messages.push();
+
+                this.onSuccess();
             } catch (err) {
+                this.messages.push({text: 'execCommand error', status: 'err'})
             }
-            setTimeout(() => {
-                document.body.removeChild(textArea);
-            }, 5000);
         },
 
-        setMutationWatcher() {
-            let target = document.getElementsByTagName('body')[0];
-
-            // Конфигурация observer (за какими изменениями наблюдать)
-            const config = {
-                childList: true,
-                subtree: true
-            };
-
-            // Колбэк-функция при срабатывании мутации
-            const callback = function (mutationsList, observer) {
-                for (let mutation of mutationsList) {
-                    console.log(mutation);
-                    if (mutation.type === 'childList') {
-                        console.log('A child node has been added or removed.');
-                    }
-                }
-            };
-
-            // Создаём экземпляр наблюдателя с указанной функцией колбэка
-            const observer = new MutationObserver(callback);
-
-            // Начинаем наблюдение за настроенными изменениями целевого элемента
-            observer.observe(target, config);
-
-            // Позже можно остановить наблюдение
-            // observer.disconnect();
+        onSuccess() {
+            this.oldRand = this.newRand;
+            this.newRand = Math.random();
+            this.$refs.textarea.value = '';
         }
     },
 
     mounted() {
-        // this.messages.push('welcome');
-
-        this.setMutationWatcher();
-
+        this.messages.push('Welcome!');
     }
 }
 </script>
@@ -108,6 +87,38 @@ export default {
 <style lang="scss" scoped>
 p {
     margin-bottom: 20px;
+}
+
+.button-wrap {
+    position: relative;
+    width: 40px;
+    height: 40px;
+}
+
+.button {
+    width: 40px;
+    height: 40px;
+}
+
+.input-hidden-wrap {
+    position: absolute;
+    overflow-x: hidden;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 0px;
+}
+
+.input-hidden {
+    height: 40px;
+    width: 50px;
+    position: absolute;
+    top: 5px;
+    left: 0;
+
+    opacity: 0;
+    //    display: none;
+    //    visibility: hidden;
 }
 
 textarea {
