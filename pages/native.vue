@@ -3,7 +3,7 @@
         .test-data
             p(v-for="message in messages" :class="message.status") {{message.text || message}}
         .l-container
-            h2 npm navigator.clipboard native test
+            h2 navigator.clipboard
             p Скопированное значение {{oldRand}}
             p Новое значение для копирования {{newRand}}
             button.button.copy-button(@click="onClick" ref="button") Copy
@@ -32,7 +32,15 @@ export default {
 
     methods: {
         onClick() {
-            navigator.clipboard.writeText(this.newRand)
+
+            console.log(navigator.clipboard);
+
+            const clipboardItem = new ClipboardItem({
+                'text/plain': () => new Promise(resolve => {
+                    resolve(new Blob(['some text for testing']));
+                })
+            })
+            navigator.clipboard.write([clipboardItem])
                 .then(() => {
                     this.messages.push({text: 'success', status: 'ok'});
                     this.onSuccess();

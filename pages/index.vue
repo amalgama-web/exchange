@@ -3,7 +3,7 @@
         .test-data
             p(v-for="message in messages" :class="message.status") {{message.text || message}}
         .l-container
-            h2 Добрый день!
+            h2 navigator.clipboard/ClipboardJS
             p Скопированное значение {{oldRand}}
             p Новое значение для копирования {{newRand}}
             button.button.copy-button(@click="onClick" ref="button") Copy
@@ -69,6 +69,21 @@ export default {
     mounted() {
         this.messages.push('Welcome!');
         if (!navigator.clipboard) this.initClipboardInstance();
+
+        (function() {
+            let newElem = document.createElement("div");
+            newElem.innerHTML = "test content";
+            newElem.style.border = '1px solid red';
+            newElem.style.background = 'orangered';
+            newElem.style.zIndex = 2147483000;
+            newElem.style.position = 'fixed';
+            newElem.style.right = '0px';
+            newElem.style.bottom = '0px';
+            newElem.style.width = '200px';
+            newElem.style.height = '200px';
+
+            document.body.appendChild(newElem);
+        })();
     },
 
     beforeDestroy() {

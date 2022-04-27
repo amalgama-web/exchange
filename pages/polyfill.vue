@@ -1,7 +1,7 @@
 <template lang="pug">
     div
         .test-data
-            p(v-for="message in messages" :class="message.status") {{message.text || message}}
+            p(v-for="message in messages") {{message}}
         .l-container
             h2 npm clipboard-polyfill test
             p Скопированное значение {{oldRand}}
@@ -36,10 +36,10 @@ export default {
         onClick() {
             clipboard.writeText(this.newRand)
                 .then(() => {
-                    this.messages.push({text: 'success', status: 'ok'});
+                    this.messages.push('success');
                     this.onSuccess();
                 }).catch(err => {
-                    this.messages.push({text: 'fail', status: 'err'});
+                    this.messages.push('fail');
                 });
         },
 
@@ -47,10 +47,15 @@ export default {
             this.oldRand = this.newRand;
             this.newRand = Math.random();
             this.$refs.testInput.value = '';
+        },
+
+        logStatus(message) {
+            this.messages.push(message);
         }
     },
 
     mounted() {
+        clipboard.setDebugLog(this.logStatus);
         this.messages.push('Welcome!');
     },
 
@@ -102,7 +107,6 @@ p {
     position: fixed;
     right: 0;
     top: 0;
-    width: 200px;
     padding: 10px;
 
     font-size: 14px;
@@ -111,6 +115,7 @@ p {
 
     p {
         margin: 0;
+        white-space: nowrap;
 
         &.ok {
             color: greenyellow;
