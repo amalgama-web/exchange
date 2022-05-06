@@ -11,7 +11,9 @@ export default {
             currencyPairs: [],
 
             apiPairsEndpoint: null,
-            apiRatesEndpoint: null
+            apiRatesEndpoint: null,
+
+            bodyClass: ''
         }
     },
 
@@ -40,6 +42,11 @@ export default {
 
         setRatesEndpoint(state, payload) {
             state.apiRatesEndpoint = payload;
+        },
+
+        setClass(state, payload) {
+            state.bodyClass = payload;
+            console.log('set class commit');
         }
     },
 
@@ -92,6 +99,10 @@ export default {
             context.commit('setRatesEndpoint', payload);
             localStorage.setItem('apiRatesEndpoint', JSON.stringify(payload));
         },
+
+        setClass(context, payload) {
+            context.commit('setClass', payload);
+        }
 
     },
 }
