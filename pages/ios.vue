@@ -85,14 +85,15 @@ export default {
 }
 
 html.overlay-open {
-    //overflow: hidden !important;
-    //height: 100% !important;
-
+    height: 100% !important;
+    min-height: 100% !important;
+    max-height: 100% !important;
+    overflow: hidden;
     body {
-        overflow: hidden !important;
-        touch-action: none !important;
-        //touch-action: none;
-        //height: 100% !important;
+        height: 100%;
+        overflow: hidden;
+        //overflow: hidden !important;
+        //touch-action: none !important;
     }
 
 }
