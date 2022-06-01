@@ -1,35 +1,24 @@
 <template lang="pug">
     .l-container
-        h2 Добрый день!
-        .info-section(v-if='!isGeneratedDataReady && !isEndpointsCreated')
-            p
-                | Для начала работы необходимо сгенерировать списки валют и endpoints для их получения
-            nuxt-link.button(to='/generator')
-                | Перейти к генерации
-        .info-section(v-else-if='isGeneratedDataReady && !isEndpointsCreated')
-            p
-                | Списки валют сгенерированы, но еще не отправлены в API
-            nuxt-link.button(to='/generator/format-and-save')
-                | Перейти к отправке
-        template(v-else='')
-            .info-section
-                p
-                    | Endpoints созданы, но вы можете их обновить c другими валютами
-                nuxt-link.button(to='/generator/')
-                    | Перейти к обновлению
-            .info-section
-                p
-                    | Endpoints для получения данных обмена созданы, можно перейти к обмену
-                p
-                    | Получение списка валютных пар и комиссий
+
+        .modal(v-if="modalIsOpen")
+            .modal__inner
+                .modal__body
+                    button(@click="closeModal") close
                     br
-                    a(target='_blank' :href='apiPairsEndpoint') {{apiPairsEndpoint}}
-                p
-                    | Получение списка пара-курс
-                    br
-                    a(target='_blank' :href='apiRatesEndpoint') {{apiRatesEndpoint}}
-                nuxt-link.button._green(to='/exchange/')
-                    | Перейти к обмену
+                    | Lorem ipsum dolor sit amet, consectetur adipisicing elit. Distinctio dolore ex, excepturi exercitationem fuga hic ipsam iste libero magni molestias nam natus quisquam ratione reiciendis, reprehenderit, saepe sint totam voluptatem?
+                    | Lorem ipsum dolor sit amet, consectetur adipisicing elit. Distinctio dolore ex, excepturi exercitationem fuga hic ipsam iste libero magni molestias nam natus quisquam ratione reiciendis, reprehenderit, saepe sint totam voluptatem?
+                    | Lorem ipsum dolor sit amet, consectetur adipisicing elit. Distinctio dolore ex, excepturi exercitationem fuga hic ipsam iste libero magni molestias nam natus quisquam ratione reiciendis, reprehenderit, saepe sint totam voluptatem?
+                    | Lorem ipsum dolor sit amet, consectetur adipisicing elit. Distinctio dolore ex, excepturi exercitationem fuga hic ipsam iste libero magni molestias nam natus quisquam ratione reiciendis, reprehenderit, saepe sint totam voluptatem?
+                    input(type="text" v-model="text")
+                    | enter text: {{text}}
+
+        p(@click="openModal")
+            | Lorem ipsum dolor sit amet, consectetur adipisicing elit. Ad eaque eligendi excepturi exercitationem expedita impedit maiores modi molestiae nisi odit, placeat provident repudiandae saepe sit temporibus? Molestias necessitatibus odio veniam!
+            | Lorem ipsum dolor sit amet, consectetur adipisicing elit. Ad eaque eligendi excepturi exercitationem expedita impedit maiores modi molestiae nisi odit, placeat provident repudiandae saepe sit temporibus? Molestias necessitatibus odio veniam!
+            | Lorem ipsum dolor sit amet, consectetur adipisicing elit. Ad eaque eligendi excepturi exercitationem expedita impedit maiores modi molestiae nisi odit, placeat provident repudiandae saepe sit temporibus? Molestias necessitatibus odio veniam!
+            | Lorem ipsum dolor sit amet, consectetur adipisicing elit. Ad eaque eligendi excepturi exercitationem expedita impedit maiores modi molestiae nisi odit, placeat provident repudiandae saepe sit temporibus? Molestias necessitatibus odio veniam!
+
 
 </template>
 
@@ -38,6 +27,13 @@
     export default {
         meta: {
             ruName: 'Главная'
+        },
+
+        data() {
+            return {
+                modalIsOpen: false,
+                text: ''
+            }
         },
 
         computed: {
@@ -56,6 +52,15 @@
             apiRatesEndpoint() {
                 return this.$store.state.apiRatesEndpoint;
             },
+        },
+
+        methods: {
+            openModal() {
+                this.modalIsOpen = true;
+            },
+            closeModal() {
+                this.modalIsOpen = false;
+            }
         }
 
 
@@ -65,6 +70,40 @@
 <style lang="scss">
     .info-section {
         margin-bottom: 40px;
+    }
+
+    .modal {
+        position: fixed;
+        width: 100%;
+        height: 100%;
+
+        left: 0;
+        top: 0;
+
+        overflow: auto;
+
+        &__inner {
+            width: 100%;
+            min-height: 100%;
+            padding: 15px;
+            background-color: rgba(0,0,0,.4);
+
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        &__body {
+            padding: 30px;
+            background-color: #fff;
+            border-radius: 10px;
+            max-width: 450px;
+            input {
+                display: block;
+                width: 100%;
+                height: 40px;
+                padding: 0 20px;
+            }
+        }
     }
     
 </style>
