@@ -8,8 +8,6 @@
                     br
                     | Lorem ipsum dolor sit amet, consectetur adipisicing elit. Distinctio dolore ex, excepturi exercitationem fuga hic ipsam iste libero magni molestias nam natus quisquam ratione reiciendis, reprehenderit, saepe sint totam voluptatem?
                     | Lorem ipsum dolor sit amet, consectetur adipisicing elit. Distinctio dolore ex, excepturi exercitationem fuga hic ipsam iste libero magni molestias nam natus quisquam ratione reiciendis, reprehenderit, saepe sint totam voluptatem?
-                    | Lorem ipsum dolor sit amet, consectetur adipisicing elit. Distinctio dolore ex, excepturi exercitationem fuga hic ipsam iste libero magni molestias nam natus quisquam ratione reiciendis, reprehenderit, saepe sint totam voluptatem?
-                    | Lorem ipsum dolor sit amet, consectetur adipisicing elit. Distinctio dolore ex, excepturi exercitationem fuga hic ipsam iste libero magni molestias nam natus quisquam ratione reiciendis, reprehenderit, saepe sint totam voluptatem?
                     input(type="text" v-model="text")
                     | enter text: {{text}}
 
@@ -101,7 +99,7 @@
                 display: block;
                 width: 100%;
                 height: 40px;
-                padding: 0 20px;
+                padding: 0 10px;
             }
         }
     }
