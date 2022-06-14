@@ -1,7 +1,6 @@
 <template lang="pug">
     .wrapper
         the-header
-        the-breadcrumbs
         nuxt
 </template>
 
