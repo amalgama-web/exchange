@@ -1,6 +1,7 @@
 <template lang="pug">
     .l-container
         h2 Страница для тестов
+        nuxt-link(to="/second/") second page
 
 </template>
 
@@ -13,8 +14,6 @@
 
         computed: {
         }
-
-
     }
 </script>
 
