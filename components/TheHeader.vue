@@ -1,7 +1,7 @@
 <template lang="pug">
     header.header
         .l-container
-            | Exchange service
+            | Video format tests
 </template>
 
 <script>

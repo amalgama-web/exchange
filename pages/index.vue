@@ -1,46 +1,63 @@
 <template lang="pug">
     .l-container
-        h2 Добрый день!
-        .info-section(v-if='!isDataGenerated && !isDataStoredInAPI')
-            p
-                | Для начала работы необходимо сгенерировать списки валют и сохранить их в API
-            nuxt-link.button(to='/generator')
-                | Перейти к генерации
-        .info-section(v-else-if='isDataGenerated && !isDataStoredInAPI')
-            p
-                | Списки валют сгенерированы, но еще не сохранены в API
-            nuxt-link.button(to='/generator/format-and-save')
-                | Перейти к сохранению
-        template(v-else='')
-            .info-section
-                p
-                    | Данные сгенерированы и сохранены, но вы можете их обновить c другими валютами
-                nuxt-link.button(to='/generator/')
-                    | Перейти к обновлению
-            .info-section
-                p
-                    | Или вы можете перейти к обмену с текущими данными
-                nuxt-link.button._green(to='/exchange/')
-                    | Перейти к обмену
+        test
+        token
+        coins
 
 </template>
 
 <script>
-    import { mapGetters } from 'vuex';
+import {mapGetters} from 'vuex';
+import test from '@/pages/parts/test';
+import token from '@/pages/parts/token';
+import coins from '@/pages/parts/coins';
 
-    export default {
-        meta: {
-            ruName: 'Главная'
-        },
 
-        computed: {
-            ...mapGetters(['isDataGenerated', 'isDataStoredInAPI']),
-        }
+export default {
+    meta: {
+        ruName: 'Главная'
+    },
+
+    computed: {
+        ...mapGetters(['isDataGenerated', 'isDataStoredInAPI']),
+    },
+
+    components: {
+        test,
+        token,
+        coins,
     }
+}
 </script>
 
 <style lang="scss">
-    .info-section {
-        margin-bottom: 40px;
+.section {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 20px;
+
+    margin-bottom: 40px;
+
+    text-align: center;
+
+    @media (max-width: 1000px) {
+        grid-template-columns: 1fr;
     }
+
+    &__item {
+        background: #5881ea;
+        padding: 15px;
+        &:last-child {
+            background-color: dodgerblue;
+        }
+    }
+
+    video {
+        display: block;
+        width: 100%;
+        height: auto;
+        max-width: 400px;
+        margin: 0 auto;
+    }
+}
 </style>
