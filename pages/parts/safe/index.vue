@@ -13,7 +13,7 @@
                 poster="/preloader/safe.png"
             )
                 source(
-                    :src="'/video/safe.webm'"
+                    :src="'https://cdn.coinloan.io/landing/safe.webm'"
                     type="video/webm"
                 )
         div.section__item
@@ -29,7 +29,7 @@
                 poster="/preloader/safe.png"
             )
                 source(
-                    :src="'/video/safe.mov'"
+                    :src="'https://cdn.coinloan.io/landing/safe.mov'"
                     type="video/quicktime"
                 )
         div.section__item
@@ -45,11 +45,11 @@
                 poster="/preloader/safe.png"
             )
                 source(
-                    :src="'/video/safe.mov'"
+                    :src="'https://cdn.coinloan.io/landing/safe.mov'"
                     type="video/quicktime"
                 )
                 source(
-                    :src="'/video/safe.webm'"
+                    :src="'https://cdn.coinloan.io/landing/safe.webm'"
                     type="video/webm"
                 )
 

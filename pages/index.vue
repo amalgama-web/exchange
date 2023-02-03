@@ -1,6 +1,7 @@
 <template lang="pug">
     .l-container
-        test
+        pngsafe
+        safe
         token
         coins
 
@@ -8,7 +9,8 @@
 
 <script>
 import {mapGetters} from 'vuex';
-import test from '@/pages/parts/test';
+import pngsafe from '@/pages/parts/pngsafe';
+import safe from '@/pages/parts/safe';
 import token from '@/pages/parts/token';
 import coins from '@/pages/parts/coins';
 
@@ -23,7 +25,8 @@ export default {
     },
 
     components: {
-        test,
+        pngsafe,
+        safe,
         token,
         coins,
     }
@@ -59,5 +62,10 @@ export default {
         max-width: 400px;
         margin: 0 auto;
     }
+}
+.img-response {
+    display: block;
+    max-width: 100%;
+    height: auto;
 }
 </style>

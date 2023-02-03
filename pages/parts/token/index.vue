@@ -13,7 +13,7 @@
                 poster="/preloader/token.jpg"
             )
                 source(
-                    :src="'/video/token.webm'"
+                    :src="'https://cdn.coinloan.io/landing/token.webm'"
                     type="video/webm"
                 )
         div.section__item
@@ -29,7 +29,7 @@
                 poster="/preloader/token.jpg"
             )
                 source(
-                    :src="'/video/token.mp4'"
+                    :src="'https://cdn.coinloan.io/landing/token.mp4'"
                     type="video/mp4"
                 )
         div.section__item
@@ -45,11 +45,11 @@
                 poster="/preloader/token.jpg"
             )
                 source(
-                    :src="'/video/token.webm'"
+                    :src="'https://cdn.coinloan.io/landing/token.webm'"
                     type="video/webm"
                 )
                 source(
-                    :src="'/video/token.mp4'"
+                    :src="'https://cdn.coinloan.io/landing/token.mp4'"
                     type="video/mp4"
                 )
 
